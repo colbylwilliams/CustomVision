@@ -13,7 +13,8 @@ public class CustomVisionClient {
     let basePath = "/customvision/v1.2/Training"
     let scheme = "https://"
     
-    let trainingKey: String
+    
+    public static let shared: CustomVisionClient = CustomVisionClient(withTrainingKey: "")
     
     public static var defaultProjectId: String = ""
     
@@ -44,7 +45,11 @@ public class CustomVisionClient {
     
     let session: URLSession
     
+    public var trainingKey: String
     
+    public var loggingEnabled: Bool = false
+    
+
     public init(withTrainingKey key: String, urlSessionConfiguration configuration: URLSessionConfiguration = URLSessionConfiguration.default) {
         trainingKey = key
         session = URLSession(configuration: configuration)
@@ -53,7 +58,7 @@ public class CustomVisionClient {
     
     public func createImages(inProject projectId: String = defaultProjectId, from data: Data, withTags tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> ()) {
         
-        let query = getQuery(("tagIds", tagIds?.joined(separator: ",")))
+        let query = getQuery(("tagIds", tagIds))
         
         let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: data, withQuery: query)
         
@@ -62,7 +67,7 @@ public class CustomVisionClient {
     
     public func deleteImages(inProject projectId: String = defaultProjectId, withIds imageIds: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
-        let query = "imageIds=\(imageIds.joined(separator: ","))"
+        let query = getQuery(("imageIds", imageIds))
         
         let request = dataRequest(for: .deleteImages(projectId: projectId), withQuery: query)
         
@@ -126,7 +131,7 @@ public class CustomVisionClient {
     
     public func deleteTags(inProject projectId: String = defaultProjectId, withTagIds tagIds: [String], from images: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
-        let query = getQuery(("tagIds", tagIds.joined(separator: ",")), ("imageIds", images.joined(separator: ",")))
+        let query = getQuery(("tagIds", tagIds), ("imageIds", images))
         
         let request = dataRequest(for: .deleteImageTags(projectId: projectId), withQuery: query)
         
@@ -163,7 +168,7 @@ public class CustomVisionClient {
     
     public func deletePrediction(fromProject projectId: String = defaultProjectId, withIds ids: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
-        let query = getQuery(("ids", ids.joined(separator: ",")))
+        let query = getQuery(("ids", ids))
         
         let request = dataRequest(for: .deletePrediction(projectId: projectId), withQuery: query)
         
@@ -269,7 +274,7 @@ public class CustomVisionClient {
     
     public func getTaggedImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withTags tags: [String]? = nil, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Image]>) -> Void) {
         
-        let query = getQuery(("iterationId", iterationId), ("tagIds", tags?.joined(separator: ",")), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
+        let query = getQuery(("iterationId", iterationId), ("tagged", tags), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
         let request = dataRequest(for: .getTaggedImages(projectId: projectId), withQuery: query)
         
@@ -417,6 +422,23 @@ public class CustomVisionClient {
 }
 
 fileprivate extension Optional where Wrapped == String {
+    mutating func add (_ queryKey: String, _ queryValue: [String]?) {
+        if self == nil, let queryValue = queryValue {
+            
+            if queryValue.isEmpty {
+                return
+            }
+            
+            let queryValueString = "[" + queryValue.joined(separator: ",") + "]"
+
+            self = "?\(queryKey)=\(queryValueString)"
+            
+        } else {
+            self!.add(queryKey, queryValue)
+        }
+    }
+
+
     mutating func add (_ queryKey: String, _ queryValue: Any?) {
         if self == nil, let queryValue = queryValue {
             
@@ -433,6 +455,24 @@ fileprivate extension Optional where Wrapped == String {
 }
 
 fileprivate extension String {
+    
+    mutating func add (_ queryKey: String, _ queryValue: [String]?) {
+        if let queryValue = queryValue {
+            
+            if queryValue.isEmpty {
+                return
+            }
+            
+            let queryValueString = "[" + queryValue.joined(separator: ",") + "]"
+            
+            if self.contains("?") {
+                self += "&\(queryKey)=\(queryValueString)"
+            } else {
+                self = "?\(queryKey)=\(queryValueString)"
+            }
+        }
+    }
+
     mutating func add (_ queryKey: String, _ queryValue: Any?) {
         if let queryValue = queryValue {
             
