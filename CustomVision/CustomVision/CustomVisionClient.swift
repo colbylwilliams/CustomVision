@@ -51,9 +51,11 @@ public class CustomVisionClient {
     }
     
     
-    public func createImages(inProject projectId: String = defaultProjectId, from data: Data, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> ()) {
+    public func createImages(inProject projectId: String = defaultProjectId, from data: Data, withTags tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> ()) {
         
-        let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: data)
+        let query = getQuery(("tagIds", tagIds?.joined(separator: ",")))
+        
+        let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: data, withQuery: query)
         
         return sendRequest(request, completion: completion)
     }
@@ -88,14 +90,10 @@ public class CustomVisionClient {
         return sendRequest(request, completion: completion)
     }
     
-    public func createProject(withDescription description: String? = nil, inDomain domain: String = "General", completion: @escaping (CustomVisionResponse<Project>) -> Void) {
+    public func createProject(withDescription description: String? = nil, inDomain domain: String? = nil, completion: @escaping (CustomVisionResponse<Project>) -> Void) {
         
-        var query = "domainId=\(domain)"
-        
-        if let description = description, !description.isEmpty {
-            query += "&description=\(description)"
-        }
-        
+        let query = getQuery(("domainId", domain), ("description", description))
+
         let request = dataRequest(for: .createProject, withBody: query)
         
         return sendRequest(request, completion: completion)
@@ -110,11 +108,7 @@ public class CustomVisionClient {
     
     public func createTag(inProject projectId: String = defaultProjectId, withName name: String, andDescription description: String? = nil, completion: @escaping (CustomVisionResponse<Tag>) -> Void) {
         
-        var query = "name=\(name)"
-        
-        if let description = description, !description.isEmpty {
-            query += "&description=\(description)"
-        }
+        let query = getQuery(("name", name), ("description", description))
         
         let request = dataRequest(for: .createTag(projectId: projectId), withQuery: query)
         
@@ -123,7 +117,7 @@ public class CustomVisionClient {
     
     public func getTags(inProject projectId: String = defaultProjectId, forIteration iteration: String? = nil, completion: @escaping (CustomVisionResponse<TagList>) -> Void) {
         
-        let query = iteration == nil || iteration!.isEmpty ? nil : "iterationId=\(iteration!)"
+        let query = getQuery(("iterationId", iteration))
         
         let request = dataRequest(for: CustomVisionApi.getTags(projectId: projectId), withQuery: query)
         
@@ -132,7 +126,7 @@ public class CustomVisionClient {
     
     public func deleteTags(inProject projectId: String = defaultProjectId, withTagIds tagIds: [String], from images: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
-        let query = "tatIds=\(tagIds.joined(separator: ","))&imageIds=\(images.joined(separator: ","))"
+        let query = getQuery(("tagIds", tagIds.joined(separator: ",")), ("imageIds", images.joined(separator: ",")))
         
         let request = dataRequest(for: .deleteImageTags(projectId: projectId), withQuery: query)
         
@@ -169,7 +163,7 @@ public class CustomVisionClient {
     
     public func deletePrediction(fromProject projectId: String = defaultProjectId, withIds ids: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
-        let query = "ids=\(ids.joined(separator: ","))"
+        let query = getQuery(("ids", ids.joined(separator: ",")))
         
         let request = dataRequest(for: .deletePrediction(projectId: projectId), withQuery: query)
         
@@ -222,7 +216,7 @@ public class CustomVisionClient {
     
     public func exportIteration(inProject projectId: String = defaultProjectId, withId iterationId: String, forPlatform platform: Export.Platform, completion: @escaping (CustomVisionResponse<Export>) -> Void) {
         
-        let query = "platform=\(platform.rawValue)"
+        let query = getQuery(("platform", platform.rawValue))
         
         let request = dataRequest(for: .exportIteration(projectId: projectId, iterationId: iterationId), withQuery: query)
         
@@ -259,7 +253,7 @@ public class CustomVisionClient {
     
     public func getPerformance(forIteration iterationId: String, inProject projectId: String = defaultProjectId, withThreshold threshold: Float, completion: @escaping (CustomVisionResponse<IterationPerformance>) -> Void) {
         
-        let query = "threshold=\(threshold)"
+        let query = getQuery(("threshold", threshold))
         
         let request = dataRequest(for: .getIterationPerformance(projectId: projectId, iterationId: iterationId), withQuery: query)
         
@@ -273,18 +267,18 @@ public class CustomVisionClient {
         return sendRequest(request, completion: completion)
     }
     
-    public func getTaggedImages(forIteration iterationId: String, inProject projectId: String = defaultProjectId, withTags tags: [String], orderedBy orderBy: OrderBy, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Iteration]>) -> Void) {
+    public func getTaggedImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withTags tags: [String]? = nil, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Iteration]>) -> Void) {
         
-        let query = "iterationId=\(iterationId)&tagIds=\(tags.joined(separator: ","))&orderBy=\(orderBy.rawValue)&take=\(take)&skip=\(skip)"
+        let query = getQuery(("iterationId", iterationId), ("tagIds", tags?.joined(separator: ",")), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
         let request = dataRequest(for: .getTaggedImages(projectId: projectId), withQuery: query)
         
         return sendRequest(request, completion: completion)
     }
     
-    public func getUntaggedImages(forIteration iterationId: String, inProject projectId: String = defaultProjectId, orderedBy orderBy: OrderBy, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Image]>) -> Void) {
+    public func getUntaggedImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Image]>) -> Void) {
         
-        let query = "iterationId=\(iterationId)&orderBy=\(orderBy.rawValue)&take=\(take)&skip=\(skip)"
+        let query = getQuery(("iterationId", iterationId), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
         let request = dataRequest(for: .getUntaggedImages(projectId: projectId), withQuery: query)
         
@@ -298,18 +292,18 @@ public class CustomVisionClient {
         return sendRequest(request, completion: completion)
     }
     
-    public func quickTestImage(forIteration iterationId: String, inProject projectId: String = defaultProjectId, with imageData: Data, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    public func quickTestImage(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, with imageData: Data, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
         
-        let query = "iterationId=\(iterationId)"
+        let query = getQuery(("iterationId", iterationId))
         
         let request = dataRequest(for: .quickTestImage(projectId: projectId), withBody: imageData, withQuery: query)
         
         return sendRequest(request, completion: completion)
     }
     
-    public func quickTestImageUrl(forIteration iterationId: String, inProject projectId: String = defaultProjectId, with imageUrl: ImageUrl, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    public func quickTestImageUrl(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, with imageUrl: ImageUrl, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
         
-        let query = "iterationId=\(iterationId)"
+        let query = getQuery(("iterationId", iterationId))
         
         let request = dataRequest(for: .quickTestImageUrl(projectId: projectId), withBody: imageUrl, withQuery: query)
         
@@ -406,6 +400,52 @@ public class CustomVisionClient {
         request.httpBody = body
         
         return request
+    }
+    
+    fileprivate func getQuery(_ args: (String, Any?)...) -> String? {
+        
+        var query: String? = nil
+        
+        let filtered = args.compactMap { $0.1 != nil ? ($0.0, $0.1!) : nil }
+        
+        for item in filtered {
+            query?.add(item.0, item.1)
+        }
+        
+        return query
+    }
+}
+
+fileprivate extension Optional where Wrapped == String {
+    mutating func add (_ queryKey: String, _ queryValue: Any?) {
+        if self == nil, let queryValue = queryValue {
+            
+            if let queryValueString = queryValue as? String, queryValueString.isEmpty {
+                return
+            }
+            
+            self = "?\(queryKey)=\(queryValue)"
+            
+        } else {
+            self!.add(queryKey, queryValue)
+        }
+    }
+}
+
+fileprivate extension String {
+    mutating func add (_ queryKey: String, _ queryValue: Any?) {
+        if let queryValue = queryValue {
+            
+            if let queryValueString = queryValue as? String, queryValueString.isEmpty {
+                return
+            }
+
+            if self.contains("?") {
+                self += "&\(queryKey)=\(queryValue)"
+            } else {
+                self = "?\(queryKey)=\(queryValue)"
+            }
+        }
     }
 }
 

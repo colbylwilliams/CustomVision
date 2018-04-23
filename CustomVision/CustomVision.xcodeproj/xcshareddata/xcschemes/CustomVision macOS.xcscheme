@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "93ED0E112081B4820020B22B"
-               BuildableName = "CustomVision_macOS.framework"
+               BuildableName = "CustomVision.framework"
                BlueprintName = "CustomVision macOS"
                ReferencedContainer = "container:CustomVision.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E112081B4820020B22B"
-            BuildableName = "CustomVision_macOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision macOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E112081B4820020B22B"
-            BuildableName = "CustomVision_macOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision macOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E112081B4820020B22B"
-            BuildableName = "CustomVision_macOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision macOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>

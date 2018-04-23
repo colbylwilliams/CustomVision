@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "93ED0E492081B4AD0020B22B"
-               BuildableName = "CustomVision_watchOS.framework"
+               BuildableName = "CustomVision.framework"
                BlueprintName = "CustomVision watchOS"
                ReferencedContainer = "container:CustomVision.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E492081B4AD0020B22B"
-            BuildableName = "CustomVision_watchOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision watchOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E492081B4AD0020B22B"
-            BuildableName = "CustomVision_watchOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision watchOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>

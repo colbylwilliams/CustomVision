@@ -13,7 +13,7 @@ class CustomVisionTests: XCTestCase {
     let timeout: TimeInterval = 30.0
     
     let projectId = ""
-    let iterationId = ""
+    let iterationId: String? = nil
     
     let client = CustomVisionClient(withTrainingKey: "")
     
@@ -126,6 +126,10 @@ class CustomVisionTests: XCTestCase {
     
     func testGetIteration () {
         
+        XCTAssertNotNil(iterationId)
+        
+        guard let iterationId = iterationId else { return }
+        
         var response: CustomVisionResponse<Iteration>?
         let expectation = self.expectation(description: "should not fail :)")
         
@@ -145,6 +149,10 @@ class CustomVisionTests: XCTestCase {
     }
     
     func testGetIterationInProject () {
+        
+        XCTAssertNotNil(iterationId)
+
+        guard let iterationId = iterationId else { return }
         
         var response: CustomVisionResponse<Iteration>?
         let expectation = self.expectation(description: "should not fail :)")

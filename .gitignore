@@ -119,3 +119,4 @@ project.lock.json
 *.xcbkptlist
 *.xcuserstate
 # *.xcworkspacedata
+CustomVision.framework.zip

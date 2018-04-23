@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "93ED0E2D2081B4980020B22B"
-               BuildableName = "CustomVision_tvOS.framework"
+               BuildableName = "CustomVision.framework"
                BlueprintName = "CustomVision tvOS"
                ReferencedContainer = "container:CustomVision.xcodeproj">
             </BuildableReference>
@@ -43,7 +43,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E2D2081B4980020B22B"
-            BuildableName = "CustomVision_tvOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision tvOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>
@@ -65,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E2D2081B4980020B22B"
-            BuildableName = "CustomVision_tvOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision tvOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>
@@ -83,7 +83,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "93ED0E2D2081B4980020B22B"
-            BuildableName = "CustomVision_tvOS.framework"
+            BuildableName = "CustomVision.framework"
             BlueprintName = "CustomVision tvOS"
             ReferencedContainer = "container:CustomVision.xcodeproj">
          </BuildableReference>
