@@ -267,7 +267,7 @@ public class CustomVisionClient {
         return sendRequest(request, completion: completion)
     }
     
-    public func getTaggedImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withTags tags: [String]? = nil, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Iteration]>) -> Void) {
+    public func getTaggedImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withTags tags: [String]? = nil, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Image]>) -> Void) {
         
         let query = getQuery(("iterationId", iterationId), ("tagIds", tags?.joined(separator: ",")), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
