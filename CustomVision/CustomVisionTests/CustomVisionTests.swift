@@ -217,9 +217,9 @@ class CustomVisionTests: XCTestCase {
             expectation.fulfill()
         }
         
-        print(response?.request?.url?.query ?? "nope")
-        
         wait(for: [expectation], timeout: timeout)
+        
+        print(response?.resource?.count ?? "nil")
         
         XCTAssertNotNil(response?.response)
         XCTAssertTrue(response!.result.isSuccess)

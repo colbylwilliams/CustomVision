@@ -389,7 +389,7 @@ public class CustomVisionClient {
         print(urlString)
         
         guard let url = URL(string: urlString)
-            else { fatalError("Not a valid URL : \(urlString)") }        
+            else { fatalError("Not a valid URL : \(urlString)") }
         
         var request = URLRequest(url: url)
         
@@ -434,7 +434,7 @@ fileprivate extension Optional where Wrapped == String {
             var queryValueString = "\(queryValue)"
             
             if let queryValueArray = queryValue as? [String], !queryValueArray.isEmpty {
-                queryValueString = ("[" + queryValueArray.joined(separator: ",") + "]").replacingOccurrences(of: "\\\"", with: "")
+                queryValueString = queryValueArray.joined(separator: ",").replacingOccurrences(of: "\\\"", with: "")
             }
             
             if !queryValueString.isEmpty {
@@ -457,7 +457,7 @@ fileprivate extension String {
             var queryValueString = "\(queryValue)"
             
             if let queryValueArray = queryValue as? [String], !queryValueArray.isEmpty {
-                queryValueString = ("[" + queryValueArray.joined(separator: ",") + "]").replacingOccurrences(of: "\\\"", with: "")
+                queryValueString = queryValueArray.joined(separator: ",").replacingOccurrences(of: "\\\"", with: "")
             }
 
             if !queryValueString.isEmpty, self.contains("?") {
