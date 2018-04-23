@@ -274,7 +274,7 @@ public class CustomVisionClient {
     
     public func getTaggedImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withTags tags: [String]? = nil, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[Image]>) -> Void) {
         
-        let query = getQuery(("iterationId", iterationId), ("tagged", tags), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
+        let query = getQuery(("iterationId", iterationId), ("tagIds", tags), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
         let request = dataRequest(for: .getTaggedImages(projectId: projectId), withQuery: query)
         
@@ -383,11 +383,13 @@ public class CustomVisionClient {
         var urlString = scheme + host + basePath + api.path
         
         if let queryString = query, !queryString.isEmpty {
-            urlString = urlString + "?" + queryString
+            urlString = urlString + queryString
         }
+
+        print(urlString)
         
-        let url = URL(string: urlString)!
-        
+        guard let url = URL(string: urlString)
+            else { fatalError("Not a valid URL : \(urlString)") }        
         
         var request = URLRequest(url: url)
         
@@ -414,7 +416,7 @@ public class CustomVisionClient {
         let filtered = args.compactMap { $0.1 != nil ? ($0.0, $0.1!) : nil }
         
         for item in filtered {
-            query?.add(item.0, item.1)
+            query.add(item.0, item.1)
         }
         
         return query
@@ -422,23 +424,6 @@ public class CustomVisionClient {
 }
 
 fileprivate extension Optional where Wrapped == String {
-    mutating func add (_ queryKey: String, _ queryValue: [String]?) {
-        if self == nil, let queryValue = queryValue {
-            
-            if queryValue.isEmpty {
-                return
-            }
-            
-            let queryValueString = "[" + queryValue.joined(separator: ",") + "]"
-
-            self = "?\(queryKey)=\(queryValueString)"
-            
-        } else {
-            self!.add(queryKey, queryValue)
-        }
-    }
-
-
     mutating func add (_ queryKey: String, _ queryValue: Any?) {
         if self == nil, let queryValue = queryValue {
             
@@ -446,8 +431,15 @@ fileprivate extension Optional where Wrapped == String {
                 return
             }
             
-            self = "?\(queryKey)=\(queryValue)"
+            var queryValueString = "\(queryValue)"
             
+            if let queryValueArray = queryValue as? [String], !queryValueArray.isEmpty {
+                queryValueString = ("[" + queryValueArray.joined(separator: ",") + "]").replacingOccurrences(of: "\\\"", with: "")
+            }
+            
+            if !queryValueString.isEmpty {
+                self = "?\(queryKey)=\(queryValueString)"
+            }
         } else {
             self!.add(queryKey, queryValue)
         }
@@ -455,24 +447,6 @@ fileprivate extension Optional where Wrapped == String {
 }
 
 fileprivate extension String {
-    
-    mutating func add (_ queryKey: String, _ queryValue: [String]?) {
-        if let queryValue = queryValue {
-            
-            if queryValue.isEmpty {
-                return
-            }
-            
-            let queryValueString = "[" + queryValue.joined(separator: ",") + "]"
-            
-            if self.contains("?") {
-                self += "&\(queryKey)=\(queryValueString)"
-            } else {
-                self = "?\(queryKey)=\(queryValueString)"
-            }
-        }
-    }
-
     mutating func add (_ queryKey: String, _ queryValue: Any?) {
         if let queryValue = queryValue {
             
@@ -480,10 +454,16 @@ fileprivate extension String {
                 return
             }
 
-            if self.contains("?") {
-                self += "&\(queryKey)=\(queryValue)"
+            var queryValueString = "\(queryValue)"
+            
+            if let queryValueArray = queryValue as? [String], !queryValueArray.isEmpty {
+                queryValueString = ("[" + queryValueArray.joined(separator: ",") + "]").replacingOccurrences(of: "\\\"", with: "")
+            }
+
+            if !queryValueString.isEmpty, self.contains("?") {
+                self += "&\(queryKey)=\(queryValueString)"
             } else {
-                self = "?\(queryKey)=\(queryValue)"
+                self = "?\(queryKey)=\(queryValueString)"
             }
         }
     }

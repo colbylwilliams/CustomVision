@@ -12,15 +12,24 @@ class CustomVisionTests: XCTestCase {
     
     let timeout: TimeInterval = 30.0
     
-    let projectId = ""
-    let iterationId: String? = nil
+    var trainingKey: String!
+    var projectId: String!
+    var iterationId: String? = nil
+    var tagIds: [String] = []
     
-    let client = CustomVisionClient(withTrainingKey: "")
+    let client = CustomVisionClient.shared
     
     override func setUp() {
         super.setUp()
         
+        // trainingKey =
+        // projectId =
+        // iterationId =
+        // tagIds = []
+
         CustomVisionClient.defaultProjectId = projectId
+        
+        client.trainingKey = trainingKey
     }
     
     
@@ -192,6 +201,31 @@ class CustomVisionTests: XCTestCase {
         XCTAssertNil(response!.error)
     }
     
+    
+    func testGetTaggedImages () {
+        
+        XCTAssertFalse(tagIds.isEmpty)
+        
+        guard !tagIds.isEmpty else { return }
+        
+        var response: CustomVisionResponse<[Image]>?
+        let expectation = self.expectation(description: "should not fail :)")
+
+        client.getTaggedImages(withTags: tagIds) { r in
+            r.printResult()
+            response = r
+            expectation.fulfill()
+        }
+        
+        print(response?.request?.url?.query ?? "nope")
+        
+        wait(for: [expectation], timeout: timeout)
+        
+        XCTAssertNotNil(response?.response)
+        XCTAssertTrue(response!.result.isSuccess)
+        XCTAssertNotNil(response!.response)
+        XCTAssertNil(response!.error)
+    }
 
     
     
