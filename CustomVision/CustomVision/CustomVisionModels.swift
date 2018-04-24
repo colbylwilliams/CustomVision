@@ -7,6 +7,11 @@
 
 import Foundation
 
+public struct CustomVisionErrorMessage : Codable {
+    public let Code: String
+    public let Message: String
+}
+
 public struct ApiKeys: Codable {
     public let TrainingKeys: KeyPair?
     public let PredictionKeys: KeyPair?

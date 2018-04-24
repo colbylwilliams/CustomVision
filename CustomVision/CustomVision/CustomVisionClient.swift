@@ -45,6 +45,23 @@ public class CustomVisionClient {
     
     let session: URLSession
     
+    let pollDelay: Double = 3
+    
+    fileprivate
+    var _modelName = "custom.mlmodel"
+    public var modelName: String {
+        get {
+            return _modelName
+        }
+        set {
+            if newValue.contains(".mlmodel") {
+                _modelName = newValue
+            } else {
+                _modelName = newValue + ".mlmodel"
+            }
+        }
+    }
+    
     public var trainingKey: String
     
     public var loggingEnabled: Bool = false
