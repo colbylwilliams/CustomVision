@@ -361,17 +361,11 @@ public class CustomVisionClient {
         if let body = body {
             
             do {
-                
-                if case CustomVisionApi.createImagesFromData = api, let bodyData = body as? Data {
-                
-                    return self.dataRequest(for: api, withBody: getMultipartFormBody(bodyData), withQuery: query, andHeaders: headers)
-                
-                } else {
-                    
-                    let bodyData = try encoder.encode(body)
-                
-                    return self.dataRequest(for: api, withBody: bodyData, withQuery: query, andHeaders: headers)
-                }
+
+                let bodyData = try encoder.encode(body)
+            
+                return self._dataRequest(for: api, withBody: bodyData, withQuery: query, andHeaders: headers)
+
             } catch {
                 print("::::: ❌ Error :::::\n\(error)")
                 fatalError("failed to encode \(T.self)")
@@ -380,7 +374,17 @@ public class CustomVisionClient {
         
         return self._dataRequest(for: api, withQuery: query, andHeaders: headers)
     }
-    
+
+    fileprivate func dataRequest(for api: CustomVisionApi, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) -> URLRequest {
+        
+        if let body = body {
+            
+            return self._dataRequest(for: api, withBody: getMultipartFormBody(body), withQuery: query, andHeaders: headers)
+        }
+        
+        return self._dataRequest(for: api, withQuery: query, andHeaders: headers)
+    }
+
     let boundary = "Boundary-\(UUID().uuidString)"
     
     fileprivate func _dataRequest(for api: CustomVisionApi, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) -> URLRequest {
