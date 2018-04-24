@@ -60,7 +60,7 @@ public class CustomVisionClient {
         
         let query = getQuery(("tagIds", tagIds))
         
-        let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: data, withQuery: query)
+        let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: getMultipartFormBody(data), withQuery: query)
         
         return sendRequest(request, completion: completion)
     }
@@ -375,6 +375,8 @@ public class CustomVisionClient {
         return self._dataRequest(for: api, withQuery: query, andHeaders: headers)
     }
     
+    let boundary = "Boundary-\(UUID().uuidString)"
+    
     fileprivate func _dataRequest(for api: CustomVisionApi, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) -> URLRequest {
         
         guard api.hasValidIds, !trainingKey.isEmpty
@@ -396,7 +398,7 @@ public class CustomVisionClient {
         request.httpMethod = api.method.rawValue
         
         if case CustomVisionApi.createImagesFromData = api {
-            request.addValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
+            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         } else {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
@@ -414,6 +416,28 @@ public class CustomVisionClient {
         return request
     }
     
+    fileprivate func getMultipartFormBody(_ data: Data) -> Data {
+        
+        var body = Data()
+        
+        let boundaryPrefix = "--\(boundary)\r\n"
+        
+//        for (key, value) in parameters {
+//            body.appendString(boundaryPrefix)
+//            body.appendString("Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n")
+//            body.appendString("\(value)\r\n")
+//        }
+        
+        body.appendString(boundaryPrefix)
+        body.appendString("Content-Disposition: form-data; name=\"file\"; filename=\"\(UUID().uuidString).jpeg\"\r\n")
+        body.appendString("Content-Type: image/jpg\r\n\r\n")
+        body.append(data)
+        body.appendString("\r\n")
+        body.appendString("--".appending(boundary.appending("--")))
+        
+        return body
+    }
+    
     fileprivate func getQuery(_ args: (String, Any?)...) -> String? {
         
         var query: String? = nil
@@ -425,6 +449,13 @@ public class CustomVisionClient {
         }
         
         return query
+    }
+}
+
+extension Data {
+    mutating func appendString(_ string: String) {
+        let data = string.data(using: String.Encoding.utf8, allowLossyConversion: false)
+        append(data!)
     }
 }
 
