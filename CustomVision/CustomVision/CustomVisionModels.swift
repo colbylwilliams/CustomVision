@@ -98,17 +98,17 @@ public struct Image: Codable {
     public let Created: Date
     public let Width: Int
     public let Height: Int
-    public let ImageUrl: URL?
+    public let ImageUri: URL?
     public let ThumbnailUri: URL?
     public let Tags: [ImageTag]?
     public let Predictions: [PredictionTag]?
     
-    public init(Id: String, Created: Date, Width: Int, Height: Int, ImageUrl: URL?, ThumbnailUri: URL?, Tags: [ImageTag]?, Predictions: [PredictionTag]?) {
+    public init(Id: String, Created: Date, Width: Int, Height: Int, ImageUri: URL?, ThumbnailUri: URL?, Tags: [ImageTag]?, Predictions: [PredictionTag]?) {
         self.Id = Id
         self.Created = Created
         self.Width = Width
         self.Height = Height
-        self.ImageUrl = ImageUrl
+        self.ImageUri = ImageUri
         self.ThumbnailUri = ThumbnailUri
         self.Tags = Tags
         self.Predictions = Predictions
@@ -148,7 +148,7 @@ public struct ImageCreateSummary: Codable {
 }
 
 public struct ImageCreateResult: Codable {
-    public let SourceUrl: URL?
+    public let SourceUrl: String?
     public let Status: Status
     public let Image: Image?
     
@@ -164,7 +164,7 @@ public struct ImageCreateResult: Codable {
         case errorUnknown = "ErrorUnknown"
     }
     
-    public init(SourceUrl: URL?, Status: Status, Image: Image?) {
+    public init(SourceUrl: String?, Status: Status, Image: Image?) {
         self.SourceUrl = SourceUrl
         self.Status = Status
         self.Image = Image
@@ -582,7 +582,7 @@ extension Domain: CustomStringConvertible {
 
 extension Image: CustomStringConvertible {
     public var description: String {
-        return "Image\n\tId: \(Id)\n\tCreated: \(Created)\n\tWidth: \(Width)\n\tHeight: \(Height)\n\tImageUrl: \(ImageUrl.valueOrNilString)\n\tThumbnailUri: \(ThumbnailUri.valueOrNilString)\n\tTags: \(Tags.valueOrNilString)\n\tPredictions: \(Predictions.valueOrNilString)\n..."
+        return "Image\n\tId: \(Id)\n\tCreated: \(Created)\n\tWidth: \(Width)\n\tHeight: \(Height)\n\tImageUri: \(ImageUri.valueOrNilString)\n\tThumbnailUri: \(ThumbnailUri.valueOrNilString)\n\tTags: \(Tags.valueOrNilString)\n\tPredictions: \(Predictions.valueOrNilString)\n..."
     }
 }
 
