@@ -60,7 +60,7 @@ public class CustomVisionClient {
         
         let query = getQuery(("tagIds", tagIds))
         
-        let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: getMultipartFormBody(data), withQuery: query)
+        let request = dataRequest(for: .createImagesFromData(projectId: projectId), withBody: data, withQuery: query)
         
         return sendRequest(request, completion: completion)
     }
@@ -362,10 +362,16 @@ public class CustomVisionClient {
             
             do {
                 
-                let bodyData = try encoder.encode(body)
+                if case CustomVisionApi.createImagesFromData = api, let bodyData = body as? Data {
                 
-                return self.dataRequest(for: api, withBody: bodyData, withQuery: query, andHeaders: headers)
+                    return self.dataRequest(for: api, withBody: getMultipartFormBody(bodyData), withQuery: query, andHeaders: headers)
                 
+                } else {
+                    
+                    let bodyData = try encoder.encode(body)
+                
+                    return self.dataRequest(for: api, withBody: bodyData, withQuery: query, andHeaders: headers)
+                }
             } catch {
                 print("::::: ❌ Error :::::\n\(error)")
                 fatalError("failed to encode \(T.self)")
