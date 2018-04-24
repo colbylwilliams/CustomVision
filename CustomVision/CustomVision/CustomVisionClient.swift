@@ -395,7 +395,12 @@ public class CustomVisionClient {
         
         request.httpMethod = api.method.rawValue
         
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        if case CustomVisionApi.createImagesFromData = api {
+            request.addValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
+        } else {
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+        
         request.addValue(trainingKey, forHTTPHeaderField: "Training-key")
         
         if let headers = headers {

@@ -10,11 +10,21 @@ import Foundation
 public struct ApiKeys: Codable {
     public let TrainingKeys: KeyPair?
     public let PredictionKeys: KeyPair?
+    
+    public init(TrainingKeys: KeyPair?, PredictionKeys: KeyPair?) {
+        self.TrainingKeys = TrainingKeys
+        self.PredictionKeys = PredictionKeys
+    }
 }
 
 public struct KeyPair: Codable {
     public let PrimaryKey: String?
     public let SecondaryKey: String?
+    
+    public init(PrimaryKey: String?, SecondaryKey: String?) {
+        self.PrimaryKey = PrimaryKey
+        self.SecondaryKey = SecondaryKey
+    }
 }
 
 public struct Account: Codable {
@@ -22,6 +32,13 @@ public struct Account: Codable {
     public let Email: String?
     public let Keys: ApiKeys?
     public let Quotas: AccountQuota?
+    
+    public init(UserName: String?, Email: String?, Keys: ApiKeys?, Quotas: AccountQuota?) {
+        self.UserName = UserName
+        self.Email = Email
+        self.Keys = Keys
+        self.Quotas = Quotas
+    }
 }
 
 public struct AccountQuota: Codable {
@@ -29,12 +46,25 @@ public struct AccountQuota: Codable {
     public let Projects: Quota?
     public let Predictions: Quota?
     public let PerProject: [PerProjectQuota]?
+    
+    public init(Tier: String?, Projects: Quota?, Predictions: Quota?, PerProject: [PerProjectQuota]?) {
+        self.Tier = Tier
+        self.Projects = Projects
+        self.Predictions = Predictions
+        self.PerProject = PerProject
+    }
 }
 
 public struct Quota: Codable {
     public let Total: Int
     public let Used: Int
     public let TimeUntilReset: String?
+    
+    public init(Total: Int, Used: Int, TimeUntilReset: String?) {
+        self.Total = Total
+        self.Used = Used
+        self.TimeUntilReset = TimeUntilReset
+    }
 }
 
 public struct PerProjectQuota: Codable {
@@ -42,12 +72,25 @@ public struct PerProjectQuota: Codable {
     public let Iterations: Quota?
     public let Images: Quota?
     public let Tags: Quota?
+    
+    public init(ProjectId: String, Iterations: Quota?, Images: Quota?, Tags: Quota?) {
+        self.ProjectId = ProjectId
+        self.Iterations = Iterations
+        self.Images = Images
+        self.Tags = Tags
+    }
 }
 
 public struct Domain: Codable {
     public let Id: String
     public let Name: String?
     public let Exportable: Bool
+    
+    public init(Id: String, Name: String?, Exportable: Bool) {
+        self.Id = Id
+        self.Name = Name
+        self.Exportable = Exportable
+    }
 }
 
 public struct Image: Codable {
@@ -59,22 +102,49 @@ public struct Image: Codable {
     public let ThumbnailUri: URL?
     public let Tags: [ImageTag]?
     public let Predictions: [PredictionTag]?
+    
+    public init(Id: String, Created: Date, Width: Int, Height: Int, ImageUrl: URL?, ThumbnailUri: URL?, Tags: [ImageTag]?, Predictions: [PredictionTag]?) {
+        self.Id = Id
+        self.Created = Created
+        self.Width = Width
+        self.Height = Height
+        self.ImageUrl = ImageUrl
+        self.ThumbnailUri = ThumbnailUri
+        self.Tags = Tags
+        self.Predictions = Predictions
+    }
 }
 
 public struct ImageTag: Codable {
     public let TagId: String
     public let Created: Date
+    
+    public init(TagId: String, Created: Date) {
+        self.TagId = TagId
+        self.Created = Created
+    }
 }
 
 public struct PredictionTag: Codable {
     public let TagId: String
     public let Tag: String?
     public let Probability: Float
+    
+    public init(TagId: String, Tag: String?, Probability: Float) {
+        self.TagId = TagId
+        self.Tag = Tag
+        self.Probability = Probability
+    }
 }
 
 public struct ImageCreateSummary: Codable {
     public let IsBatchSuccessful: Bool
     public let Images: [ImageCreateResult]?
+    
+    public init(IsBatchSuccessful: Bool, Images: [ImageCreateResult]?) {
+        self.IsBatchSuccessful = IsBatchSuccessful
+        self.Images = Images
+    }
 }
 
 public struct ImageCreateResult: Codable {
@@ -93,46 +163,92 @@ public struct ImageCreateResult: Codable {
         case errorTagLimitExceed = "ErrorTagLimitExceed"
         case errorUnknown = "ErrorUnknown"
     }
+    
+    public init(SourceUrl: URL?, Status: Status, Image: Image?) {
+        self.SourceUrl = SourceUrl
+        self.Status = Status
+        self.Image = Image
+    }
 }
 
 public struct ImageFileCreateBatch: Codable {
     public let Images: [ImageFileCreateEntry]?
     public let TagIds: [String]?
+    
+    public init(Images: [ImageFileCreateEntry]?, TagIds: [String]?) {
+        self.Images = Images
+        self.TagIds = TagIds
+    }
 }
 
 public struct ImageFileCreateEntry: Codable {
     public let Name: String?
     public let Contents: String?
     public let TagIds: [String]?
+    
+    public init(Name: String?, Contents: String?, TagIds: [String]?) {
+        self.Name = Name
+        self.Contents = Contents
+        self.TagIds = TagIds
+    }
 }
 
 public struct ImageUrlCreateBatch: Codable {
     public let Images: [ImageUrlCreateEntry]?
     public let TagIds: [String]?
+    
+    public init(Images: [ImageUrlCreateEntry]?, TagIds: [String]?) {
+        self.Images = Images
+        self.TagIds = TagIds
+    }
 }
 
 public struct ImageUrlCreateEntry: Codable {
     public let Url: URL?
     public let TagIds: [String]?
+    
+    public init(Url: URL?, TagIds: [String]?) {
+        self.Url = Url
+        self.TagIds = TagIds
+    }
 }
 
 public struct ImageIdCreateBatch: Codable {
     public let Images: [ImageIdCreateEntry]?
     public let TagIds: [String]?
+    
+    public init(Images: [ImageIdCreateEntry]?, TagIds: [String]?) {
+        self.Images = Images
+        self.TagIds = TagIds
+    }
 }
 
 public struct ImageIdCreateEntry: Codable {
     public let Id: String?
     public let TagIds: [String]?
+    
+    public init(Id: String?, TagIds: [String]?) {
+        self.Id = Id
+        self.TagIds = TagIds
+    }
 }
 
 public struct ImageTagCreateBatch: Codable {
     public let Tags: [ImageTagCreateEntry]?
+    
+    public init(Tags: [ImageTagCreateEntry]?) {
+        self.Tags = Tags
+    }
 }
 
 public struct ImageTagCreateEntry: Codable {
     public let ImageId: String
     public let TagId: String
+    
+    public init(ImageId: String, TagId: String) {
+        self.ImageId = ImageId
+        self.TagId = TagId
+    }
 }
 
 
@@ -140,6 +256,12 @@ public struct ImageTagCreateSummary: Codable {
     public let Created: [ImageTagCreateEntry]?
     public let Duplicated: [ImageTagCreateEntry]?
     public let Exceeded: [ImageTagCreateEntry]?
+    
+    public init(Created: [ImageTagCreateEntry]?, Duplicated: [ImageTagCreateEntry]?, Exceeded: [ImageTagCreateEntry]?) {
+        self.Created = Created
+        self.Duplicated = Duplicated
+        self.Exceeded = Exceeded
+    }
 }
 
 public struct PredictionQueryToken: Codable {
@@ -158,6 +280,18 @@ public struct PredictionQueryToken: Codable {
         case oldest     = "Oldest"
         case suggested  = "Suggested"
     }
+    
+    public init(Session: String?, Continuation: String?, MaxCount: Int, OrderBy: OrderBy, Tags: [PredictionQueryTag]?, IterationId: String?, StartTime: Date?, EndTime: Date?, Application: String?) {
+        self.Session = Session
+        self.Continuation = Continuation
+        self.MaxCount = MaxCount
+        self.OrderBy = OrderBy
+        self.Tags = Tags
+        self.IterationId = IterationId
+        self.StartTime = StartTime
+        self.EndTime = EndTime
+        self.Application = Application
+    }
 }
 
 public enum OrderBy: String, Codable {
@@ -169,11 +303,22 @@ public struct PredictionQueryTag: Codable {
     public let Id: String
     public let MinThreshold: Float
     public let MaxThreshold: Float
+    
+    public init(Id: String, MinThreshold: Float, MaxThreshold: Float) {
+        self.Id = Id
+        self.MinThreshold = MinThreshold
+        self.MaxThreshold = MaxThreshold
+    }
 }
 
 public struct PredictionQuery: Codable {
     public let Results: [Prediction]?
     public let Token: PredictionQueryToken?
+    
+    public init(Results: [Prediction]?, Token: PredictionQueryToken?) {
+        self.Results = Results
+        self.Token = Token
+    }
 }
 
 public struct Prediction: Codable {
@@ -184,10 +329,24 @@ public struct Prediction: Codable {
     public let Predictions: [PredictionTag]?
     public let ImageUri: URL?
     public let ThumbnailUri: URL?
+    
+    public init(Id: String, Project: String, Iteration: String, Created: Date, Predictions: [PredictionTag]?, ImageUri: URL?, ThumbnailUri: URL?) {
+        self.Id = Id
+        self.Project = Project
+        self.Iteration = Iteration
+        self.Created = Created
+        self.Predictions = Predictions
+        self.ImageUri = ImageUri
+        self.ThumbnailUri = ThumbnailUri
+    }
 }
 
 public struct ImageUrl: Codable {
     public let Url: URL?
+    
+    public init(Url: URL?) {
+        self.Url = Url
+    }
 }
 
 public struct ImagePredictionResult: Codable {
@@ -196,12 +355,26 @@ public struct ImagePredictionResult: Codable {
     public let Iteration: String
     public let Created: Date
     public let Predictions: [ImageTagPrediction]?
+    
+    public init(Id: String, Project: String, Iteration: String, Created: Date, Predictions: [ImageTagPrediction]?) {
+        self.Id = Id
+        self.Project = Project
+        self.Iteration = Iteration
+        self.Created = Created
+        self.Predictions = Predictions
+    }
 }
 
 public struct ImageTagPrediction: Codable {
     public let TagId: String
     public let Tag: String?
     public let Probability: Double
+    
+    public init(TagId: String, Tag: String?, Probability: Double) {
+        self.TagId = TagId
+        self.Tag = Tag
+        self.Probability = Probability
+    }
 }
 
 public struct Project: Codable {
@@ -213,10 +386,25 @@ public struct Project: Codable {
     public let Created: Date
     public let LastModified: Date
     public let ThumbnailUri: URL?
+    
+    public init(Id: String, Name: String?, Description: String?, Settings: ProjectSettings?, CurrentIterationId: String?, Created: Date, LastModified: Date, ThumbnailUri: URL?) {
+        self.Id = Id
+        self.Name = Name
+        self.Description = Description
+        self.Settings = Settings
+        self.CurrentIterationId = CurrentIterationId
+        self.Created = Created
+        self.LastModified = LastModified
+        self.ThumbnailUri = ThumbnailUri
+    }
 }
 
 public struct ProjectSettings: Codable {
     public let DomainId: String?
+    
+    public init(DomainId: String?) {
+        self.DomainId = DomainId
+    }
 }
 
 public struct Iteration: Codable {
@@ -230,6 +418,19 @@ public struct Iteration: Codable {
     public let ProjectId: String
     public let Exportable: Bool
     public let DomainId: String?
+    
+    public init(Id: String, Name: String?, IsDefault: Bool, Status: String?, Created: Date, LastModified: Date, TrainedAt: Date?, ProjectId: String, Exportable: Bool, DomainId: String?) {
+        self.Id = Id
+        self.Name = Name
+        self.IsDefault = IsDefault
+        self.Status = Status
+        self.Created = Created
+        self.LastModified = LastModified
+        self.TrainedAt = TrainedAt
+        self.ProjectId = ProjectId
+        self.Exportable = Exportable
+        self.DomainId = DomainId
+    }
 }
 
 public struct IterationPerformance: Codable {
@@ -238,6 +439,14 @@ public struct IterationPerformance: Codable {
     public let PrecisionStdDeviation: Double
     public let Recall: Double
     public let RecallStdDeviation: Double
+    
+    public init(PerTagPerformance: [TagPerformance]?, Precision: Double, PrecisionStdDeviation: Double, Recall: Double, RecallStdDeviation: Double) {
+        self.PerTagPerformance = PerTagPerformance
+        self.Precision = Precision
+        self.PrecisionStdDeviation = PrecisionStdDeviation
+        self.Recall = Recall
+        self.RecallStdDeviation = RecallStdDeviation
+    }
 }
 
 public struct TagPerformance: Codable {
@@ -247,6 +456,15 @@ public struct TagPerformance: Codable {
     public let PrecisionStdDeviation: Double
     public let Recall: Double
     public let RecallStdDeviation: Double
+    
+    public init(Id: String, Name: String?, Precision: Double, PrecisionStdDeviation: Double, Recall: Double, RecallStdDeviation: Double) {
+        self.Id = Id
+        self.Name = Name
+        self.Precision = Precision
+        self.PrecisionStdDeviation = PrecisionStdDeviation
+        self.Recall = Recall
+        self.RecallStdDeviation = RecallStdDeviation
+    }
 }
 
 public struct Export: Codable {
@@ -263,12 +481,24 @@ public struct Export: Codable {
         case failed     = "Failed"
         case done       = "Done"
     }
+    
+    public init(Platform: Platform, Status: Status, DownloadUri: URL?) {
+        self.Platform = Platform
+        self.Status = Status
+        self.DownloadUri = DownloadUri
+    }
 }
 
 public struct TagList: Codable {
     public let Tags: [Tag]?
     public let TotalTaggedImages: Int
     public let TotalUntaggedImages: Int
+    
+    public init(Tags: [Tag]?, TotalTaggedImages: Int, TotalUntaggedImages: Int) {
+        self.Tags = Tags
+        self.TotalTaggedImages = TotalTaggedImages
+        self.TotalUntaggedImages = TotalUntaggedImages
+    }
 }
 
 public struct Tag: Codable {
@@ -276,6 +506,13 @@ public struct Tag: Codable {
     public let Name: String?
     public let Description: String?
     public let ImageCount: Int
+    
+    public init(Id: String, Name: String?, Description: String?, ImageCount: Int) {
+        self.Id = Id
+        self.Name = Name
+        self.Description = Description
+        self.ImageCount = ImageCount
+    }
 }
 
 
