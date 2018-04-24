@@ -477,6 +477,30 @@ public class CustomVisionClient {
         
         return query
     }
+    
+    public func getErrorMessage<T>(from response: CustomVisionResponse<T>, _ update: @escaping (String) -> Void, _ completion: @escaping (Bool, String) -> Void) {
+        return getErrorMessage(from: response, completion)
+    }
+    
+    public func getErrorMessage<T>(from response: CustomVisionResponse<T>, _ completion: @escaping (Bool, String) -> Void) {
+        
+        //response.printResult()
+        //response.printResponseData()
+        
+        if let data = response.data {
+            if let errorMessage = try? decoder.decode(CustomVisionErrorMessage.self, from: data) {
+                completion(false, errorMessage.Message)
+            } else if let string = String(data: data, encoding: .utf8) {
+                completion(false, string)
+            } else {
+                completion(false, "¯\\_(ツ)_/¯")
+            }
+        } else if let error = response.error {
+            completion(false, error.localizedDescription)
+        } else {
+            completion(false, "¯\\_(ツ)_/¯")
+        }
+    }
 }
 
 extension Data {

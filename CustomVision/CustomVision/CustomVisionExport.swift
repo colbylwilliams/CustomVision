@@ -5,6 +5,8 @@
 //  Created by Colby L Williams on 4/24/18.
 //
 
+#if !os(watchOS)
+
 import Foundation
 import CoreML
 
@@ -162,25 +164,7 @@ public extension CustomVisionClient {
                 completion(false, "Model Update Failed: Unknown")
             }
         }.resume()
-    }
-    
-    public func getErrorMessage<T>(from response: CustomVisionResponse<T>, _ update: @escaping (String) -> Void, _ completion: @escaping (Bool, String) -> Void) {
-        
-        //response.printResult()
-        //response.printResponseData()
-        
-        if let data = response.data {
-            if let errorMessage = try? decoder.decode(CustomVisionErrorMessage.self, from: data) {
-                completion(false, errorMessage.Message)
-            } else if let string = String(data: data, encoding: .utf8) {
-                completion(false, string)
-            } else {
-                completion(false, "¯\\_(ツ)_/¯")
-            }
-        } else if let error = response.error {
-            completion(false, error.localizedDescription)
-        } else {
-            completion(false, "¯\\_(ツ)_/¯")
-        }
-    }
+    }    
 }
+
+#endif
