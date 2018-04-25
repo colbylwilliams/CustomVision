@@ -6,12 +6,20 @@
 //
 
 import Foundation
+#if os(macOS)
+import AppKit
+#else
 import UIKit
+#endif
 
 public extension CustomVisionClient {
     
+    #if os(macOS)
+    typealias UIImage = NSImage
+    #endif
+    
     public func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
-        
+    
         let entries = images.map { ImageFileCreateEntry(Name: nil, Contents: UIImageJPEGRepresentation($0, 1.0), TagIds: nil) }
         
         let batch = ImageFileCreateBatch(Images: entries, TagIds: tagIds)
@@ -45,4 +53,13 @@ public extension CustomVisionClient {
     public func createImage(inProject projectId: String = defaultProjectId, from image: UIImage, withNewTagNamed tagName: String, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         return self.createImages(inProject: projectId, from: [image], withNewTagNamed: tagName, completion: completion)
     }
+
+    #if os(macOS)
+    func UIImageJPEGRepresentation(_ image: NSImage, _ scale: Float) -> Data {
+        
+        let bits = image.representations.first as! NSBitmapImageRep
+        let data = bits.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:])!
+        return data
+    }
+    #endif
 }
