@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9374E91F2090C31C008F8F7E /* earring.png in Resources */ = {isa = PBXBuildFile; fileRef = 9374E91E2090C31C008F8F7E /* earring.png */; };
+		9374E9202090C31C008F8F7E /* earring.png in Resources */ = {isa = PBXBuildFile; fileRef = 9374E91E2090C31C008F8F7E /* earring.png */; };
+		9374E9212090C31C008F8F7E /* earring.png in Resources */ = {isa = PBXBuildFile; fileRef = 9374E91E2090C31C008F8F7E /* earring.png */; };
+		9374E9232090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9222090C670008F8F7E /* CustomVisionClientExtensions.swift */; };
+		9374E9242090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9222090C670008F8F7E /* CustomVisionClientExtensions.swift */; };
+		9374E9252090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9222090C670008F8F7E /* CustomVisionClientExtensions.swift */; };
+		9374E9262090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9222090C670008F8F7E /* CustomVisionClientExtensions.swift */; };
+		9374E9282090CA32008F8F7E /* CustomVisionClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9272090CA32008F8F7E /* CustomVisionClientError.swift */; };
+		9374E9292090CA32008F8F7E /* CustomVisionClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9272090CA32008F8F7E /* CustomVisionClientError.swift */; };
+		9374E92A2090CA32008F8F7E /* CustomVisionClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9272090CA32008F8F7E /* CustomVisionClientError.swift */; };
+		9374E92B2090CA32008F8F7E /* CustomVisionClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9374E9272090CA32008F8F7E /* CustomVisionClientError.swift */; };
 		93A8CC49208FA27800605C72 /* CustomVisionExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A8CC48208FA27800605C72 /* CustomVisionExport.swift */; };
 		93A8CC4A208FA27800605C72 /* CustomVisionExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A8CC48208FA27800605C72 /* CustomVisionExport.swift */; };
 		93A8CC4B208FA27800605C72 /* CustomVisionExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A8CC48208FA27800605C72 /* CustomVisionExport.swift */; };
@@ -62,6 +73,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9374E91E2090C31C008F8F7E /* earring.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = earring.png; sourceTree = "<group>"; };
+		9374E9222090C670008F8F7E /* CustomVisionClientExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVisionClientExtensions.swift; sourceTree = "<group>"; };
+		9374E9272090CA32008F8F7E /* CustomVisionClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVisionClientError.swift; sourceTree = "<group>"; };
 		93A8CC48208FA27800605C72 /* CustomVisionExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomVisionExport.swift; sourceTree = "<group>"; };
 		93ED0DF32081B4590020B22B /* CustomVision.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CustomVision.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93ED0DF62081B4590020B22B /* CustomVision.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomVision.h; sourceTree = "<group>"; };
@@ -165,6 +179,8 @@
 				93ED0DF62081B4590020B22B /* CustomVision.h */,
 				93ED0E642081B6580020B22B /* CustomVisionApi.swift */,
 				93ED0E552081B6110020B22B /* CustomVisionClient.swift */,
+				9374E9222090C670008F8F7E /* CustomVisionClientExtensions.swift */,
+				9374E9272090CA32008F8F7E /* CustomVisionClientError.swift */,
 				93A8CC48208FA27800605C72 /* CustomVisionExport.swift */,
 				93ED0E5A2081B6260020B22B /* CustomVisionModels.swift */,
 				93ED0E5F2081B63F0020B22B /* CustomVisionResponse.swift */,
@@ -176,6 +192,7 @@
 		93ED0E002081B4590020B22B /* CustomVisionTests */ = {
 			isa = PBXGroup;
 			children = (
+				9374E91E2090C31C008F8F7E /* earring.png */,
 				93ED0E012081B4590020B22B /* CustomVisionTests.swift */,
 				93ED0E032081B4590020B22B /* Info.plist */,
 			);
@@ -417,6 +434,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9374E91F2090C31C008F8F7E /* earring.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +449,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9374E9202090C31C008F8F7E /* earring.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,6 +464,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9374E9212090C31C008F8F7E /* earring.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,10 +483,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				93ED0E562081B6110020B22B /* CustomVisionClient.swift in Sources */,
+				9374E9282090CA32008F8F7E /* CustomVisionClientError.swift in Sources */,
 				93ED0E652081B6580020B22B /* CustomVisionApi.swift in Sources */,
 				93ED0E602081B63F0020B22B /* CustomVisionResponse.swift in Sources */,
 				93ED0E5B2081B6260020B22B /* CustomVisionModels.swift in Sources */,
 				93A8CC49208FA27800605C72 /* CustomVisionExport.swift in Sources */,
+				9374E9232090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,10 +505,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				93ED0E572081B6110020B22B /* CustomVisionClient.swift in Sources */,
+				9374E9292090CA32008F8F7E /* CustomVisionClientError.swift in Sources */,
 				93ED0E662081B6580020B22B /* CustomVisionApi.swift in Sources */,
 				93ED0E612081B63F0020B22B /* CustomVisionResponse.swift in Sources */,
 				93ED0E5C2081B6260020B22B /* CustomVisionModels.swift in Sources */,
 				93A8CC4A208FA27800605C72 /* CustomVisionExport.swift in Sources */,
+				9374E9242090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -502,10 +526,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				93ED0E582081B6110020B22B /* CustomVisionClient.swift in Sources */,
+				9374E92A2090CA32008F8F7E /* CustomVisionClientError.swift in Sources */,
 				93ED0E672081B6580020B22B /* CustomVisionApi.swift in Sources */,
 				93ED0E622081B63F0020B22B /* CustomVisionResponse.swift in Sources */,
 				93ED0E5D2081B6260020B22B /* CustomVisionModels.swift in Sources */,
 				93A8CC4B208FA27800605C72 /* CustomVisionExport.swift in Sources */,
+				9374E9252090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,10 +547,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				93ED0E592081B6110020B22B /* CustomVisionClient.swift in Sources */,
+				9374E92B2090CA32008F8F7E /* CustomVisionClientError.swift in Sources */,
 				93ED0E682081B6580020B22B /* CustomVisionApi.swift in Sources */,
 				93ED0E632081B63F0020B22B /* CustomVisionResponse.swift in Sources */,
 				93ED0E5E2081B6260020B22B /* CustomVisionModels.swift in Sources */,
 				93A8CC4C208FA27800605C72 /* CustomVisionExport.swift in Sources */,
+				9374E9262090C670008F8F7E /* CustomVisionClientExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

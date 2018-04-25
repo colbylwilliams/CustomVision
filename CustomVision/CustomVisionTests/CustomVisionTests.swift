@@ -33,6 +33,65 @@ class CustomVisionTests: XCTestCase {
     }
     
     
+    func testAddImageFromUIImageAndCreateTag() {
+        
+        var response: CustomVisionResponse<ImageCreateSummary>?
+        let expectation = self.expectation(description: "should not fail :)")
+        
+        let testImage = UIImage(named: "earring", in: Bundle(for: type(of: self)), compatibleWith: nil)
+        
+        XCTAssertNotNil(testImage)
+        
+        guard let earring = testImage else { return }
+        
+        client.createImage(from: earring, withNewTagNamed: "TestTest") { r in
+            r.printResponseData()
+            r.printResult()
+            response = r
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
+        
+        XCTAssertNotNil(response?.response)
+        XCTAssertTrue(response!.result.isSuccess)
+        XCTAssertNotNil(response!.response)
+        XCTAssertNil(response!.error)
+    }
+    
+    
+    func testAddImageFromImageFileCreateBatch() {
+        
+        var response: CustomVisionResponse<ImageCreateSummary>?
+        let expectation = self.expectation(description: "should not fail :)")
+        
+        let testImage = UIImage(named: "earring", in: Bundle(for: type(of: self)), compatibleWith: nil)
+        
+        XCTAssertNotNil(testImage)
+        
+        guard let earring = testImage else { return }
+        
+        let imageData = UIImagePNGRepresentation(earring)
+        
+        let entry = ImageFileCreateEntry(Name: nil, Contents: imageData, TagIds: tagIds)
+        let batch = ImageFileCreateBatch(Images: [entry], TagIds: nil)
+        
+        client.createImages(from: batch) { r in
+            r.printResponseData()
+            r.printResult()
+            response = r
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
+        
+        XCTAssertNotNil(response?.response)
+        XCTAssertTrue(response!.result.isSuccess)
+        XCTAssertNotNil(response!.response)
+        XCTAssertNil(response!.error)
+    }
+    
+    
     func testGetProjects () {
         
         var response: CustomVisionResponse<[Project]>?

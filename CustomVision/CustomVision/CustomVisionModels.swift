@@ -188,10 +188,10 @@ public struct ImageFileCreateBatch: Codable {
 
 public struct ImageFileCreateEntry: Codable {
     public let Name: String?
-    public let Contents: String?
+    public let Contents: Data?
     public let TagIds: [String]?
     
-    public init(Name: String?, Contents: String?, TagIds: [String]?) {
+    public init(Name: String?, Contents: Data?, TagIds: [String]?) {
         self.Name = Name
         self.Contents = Contents
         self.TagIds = TagIds
