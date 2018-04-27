@@ -8,12 +8,14 @@
 import Foundation
 
 extension String {
+    
     func ensuringSuffix(_ suffix: String) -> String {
         if self.hasSuffix(suffix) {
             return self
         }
         return self + suffix
     }
+    
     func removingSuffix(_ suffix: String) -> String {
         guard hasSuffix(suffix) else { return self }
         return String(dropLast(suffix.count))

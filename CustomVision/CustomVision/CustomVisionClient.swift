@@ -687,8 +687,8 @@ fileprivate extension Optional where Wrapped == String {
                 queryValueString = queryValueArray.joined(separator: ",").replacingOccurrences(of: "\\\"", with: "")
             }
             
-            if !queryValueString.isEmpty {
-                self = "?\(queryKey)=\(queryValueString)"
+            if !queryValueString.isEmpty, let queryValueEncoded = queryValueString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                self = "?\(queryKey)=\(queryValueEncoded))"
             }
         } else {
             self!.add(queryKey, queryValue)
@@ -710,10 +710,12 @@ fileprivate extension String {
                 queryValueString = queryValueArray.joined(separator: ",").replacingOccurrences(of: "\\\"", with: "")
             }
 
-            if !queryValueString.isEmpty, self.contains("?") {
-                self += "&\(queryKey)=\(queryValueString)"
-            } else {
-                self = "?\(queryKey)=\(queryValueString)"
+            if !queryValueString.isEmpty, let queryValueEncoded = queryValueString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                if self.contains("?") {
+                    self += "&\(queryKey)=\(queryValueEncoded)"
+                } else {
+                    self = "?\(queryKey)=\(queryValueEncoded)"
+                }
             }
         }
     }
