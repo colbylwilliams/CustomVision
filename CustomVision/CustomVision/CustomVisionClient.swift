@@ -18,7 +18,7 @@ public class CustomVisionClient {
        
         let client = CustomVisionClient()
         
-        client.getKeysFromPlist()
+        client.getKeysFrom(plistNamed: nil)
         
         return client
     }()
@@ -72,7 +72,7 @@ public class CustomVisionClient {
     
     public static var defaultProjectId: String = ""
     
-    public func getKeysFromPlist(customPlistName: String? = nil) {
+    public func getKeysFrom(plistNamed customPlistName: String?) {
         
         if let keys = CustomVisionKeys.tryCreateFromPlists(custom: customPlistName) {
             
