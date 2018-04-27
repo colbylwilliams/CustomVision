@@ -9,4 +9,9 @@ import Foundation
 
 public enum CustomVisionClientError : Error {
     case unknown
+    case invalidIds
+    case noTrainingKey
+    case urlError(String)
+    case decodeError(DecodingError)
+    case encodingError(EncodingError)
 }

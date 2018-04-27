@@ -1,5 +1,5 @@
 //
-//  CustomVisionModels.swift
+//  Models.swift
 //  CustomVision
 //
 //  Created by Colby L Williams on 4/14/18.

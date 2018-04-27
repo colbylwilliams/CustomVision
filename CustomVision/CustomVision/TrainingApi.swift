@@ -1,5 +1,5 @@
 //
-//  CustomVisionApi.swift
+//  TrainingApi.swift
 //  CustomVision
 //
 //  Created by Colby L Williams on 4/14/18.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum CustomVisionApi {
+enum TrainingApi {
     
     case createImagesFromData(projectId: String)
     case deleteImages(projectId: String)
