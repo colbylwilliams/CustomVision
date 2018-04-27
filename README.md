@@ -51,11 +51,11 @@ _Coming soon_
 
 To get started using CustomVision, you need to provide the SDK with your [Training Key](https://www.customvision.ai/projects#/settings).
 
-If you're working with a single [project](https://www.customvision.ai/projects), you can also provide a default project key that will be used for every project operation _(instead of passing it in as a parameter every time)_.
+If you're working with a single [project](https://www.customvision.ai/projects), you can also provide a default Project ID that will be used for every project operation _(instead of passing it in as a parameter every time)_.
 
 There are two ways to provide the Training Key and Project ID; programmatically, or by adding them to a plist file:
 
-### Code
+### Programmatically
 
 The simplest way to provide these values and start using the SDK is to set the values programmatically:
 
@@ -69,9 +69,11 @@ CustomVisionClient.shared.getIterations { r in
 ```
 
 
-### Plists
+### Plist File
 
-Alternatively, you can provide these values in your project's `info.plist`, a separate [`CustomVision.plist`](https://github.com/colbylwilliams/CustomVision/blob/master/CustomVision/CustomVision.plist), or provide the name of your own unique plist file to use.  Simply add a `CustomVisionTrainingKey` and `CustomVisionProjectId` key and provide the values of your Training Key and default Project ID respectively.
+Alternatively, you can provide these values in your project's `info.plist`, a separate [`CustomVision.plist`](https://github.com/colbylwilliams/CustomVision/blob/master/CustomVision/CustomVision.plist), or provide the name of your own plist file to use.
+
+Simply add the `CustomVisionTrainingKey` and `CustomVisionProjectId` keys and provide your Training Key and default Project ID respectively.
 
 **_Note: This method is provided for convenience when quickly developing samples and is not recommended to ship these values in a plist in production apps._**
 
@@ -116,7 +118,7 @@ CustomVisionClient.shared.getKeysFrom(plistNamed: "SuperDuperDope")
 
 ## Training Images
 
-The CustomVision SDK adds several convenience functions to make uploading training images to your project as easy as possible.
+The CustomVision SDK adds several convenience functions to make uploading new training images to your project as easy as possible.
 
 This example demonstrates creating a new Tag in the Custom Vision project, then uploading several new training images to the project, tagging each with the newly created tag:
 
