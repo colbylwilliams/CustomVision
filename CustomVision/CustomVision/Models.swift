@@ -540,6 +540,56 @@ fileprivate extension Optional where Wrapped == Date {
     }
 }
 
+// MARK: Equatable
+
+extension Domain: Equatable {
+    public static func ==(lhs: Domain, rhs: Domain) -> Bool {
+        return lhs.Id == rhs.Id
+    }
+}
+
+extension Image: Equatable {
+    public static func ==(lhs: Image, rhs: Image) -> Bool {
+        return lhs.Id == rhs.Id
+    }
+}
+
+extension ImageTag: Equatable {
+    public static func ==(lhs: ImageTag, rhs: ImageTag) -> Bool {
+        return lhs.TagId == rhs.TagId
+    }
+}
+
+extension PredictionTag: Equatable {
+    public static func ==(lhs: PredictionTag, rhs: PredictionTag) -> Bool {
+        return lhs.TagId == rhs.TagId
+    }
+}
+
+extension Prediction: Equatable {
+    public static func ==(lhs: Prediction, rhs: Prediction) -> Bool {
+        return lhs.Id == rhs.Id
+    }
+}
+
+extension Project: Equatable {
+    public static func ==(lhs: Project, rhs: Project) -> Bool {
+        return lhs.Id == rhs.Id
+    }
+}
+
+extension Iteration: Equatable {
+    public static func ==(lhs: Iteration, rhs: Iteration) -> Bool {
+        return lhs.Id == rhs.Id
+    }
+}
+
+extension Tag: Equatable {
+    public static func ==(lhs: Tag, rhs: Tag) -> Bool {
+        return lhs.Id == rhs.Id
+    }
+}
+
 
 // MARK - CustomStringConvertible
 
