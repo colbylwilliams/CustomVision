@@ -49,19 +49,20 @@ _Coming soon_
 
 ## Usage
 
-To get started using CustomVision, you need to provide the SDK with your [Training Key](https://www.customvision.ai/projects#/settings).
+To get started using CustomVision, you need to provide the SDK with your [Training Key](https://www.customvision.ai/projects#/settings) and [Prediction Key](https://www.customvision.ai/projects#/settings).
 
 If you're working with a single [project](https://www.customvision.ai/projects), you can also provide a default Project ID that will be used for every project operation _(instead of passing it in as a parameter every time)_.
 
-There are two ways to provide the Training Key and Project ID; programmatically, or by adding them to a plist file:
+There are two ways to provide the Training Key, Prediction Key, and Project ID; programmatically, or by adding them to a plist file:
 
 ### Programmatically
 
 The simplest way to provide these values and start using the SDK is to set the values programmatically:
 
 ```
-CustomVisionClient.defaultProjectId   = "CUSTOM_VISION_PROJECT_ID"
-CustomVisionClient.shared.trainingKey = "CUSTOM_VISION_TRAINING_KEY"
+CustomVisionClient.defaultProjectId     = "CUSTOM_VISION_PROJECT_ID"
+CustomVisionClient.shared.trainingKey   = "CUSTOM_VISION_TRAINING_KEY"
+CustomVisionClient.shared.predictionKey = "CUSTOM_VISION_PREDICTION_KEY"
 
 CustomVisionClient.shared.getIterations { r in
     // r.resource is [Iteration]
@@ -73,7 +74,7 @@ CustomVisionClient.shared.getIterations { r in
 
 Alternatively, you can provide these values in your project's `info.plist`, a separate [`CustomVision.plist`](https://github.com/colbylwilliams/CustomVision/blob/master/CustomVision/CustomVision.plist), or provide the name of your own plist file to use.
 
-Simply add the `CustomVisionTrainingKey` and `CustomVisionProjectId` keys and provide your Training Key and default Project ID respectively.
+Simply add the `CustomVisionTrainingKey`, `CustomVisionPredictionKey`, and `CustomVisionProjectId` keys and provide your Training Key, Prediction Key, and default Project ID respectively.
 
 **_Note: This method is provided for convenience when quickly developing samples and is not recommended to ship these values in a plist in production apps._**
 
@@ -114,7 +115,7 @@ Or add a [`CustomVision.plist`](https://github.com/colbylwilliams/CustomVision/b
 
 #### Named plist
 
-Finally, you can `CustomVisionTrainingKey` and `CustomVisionProjectId` key/values to any plist in your project's **main bundle** and provide the name of the plist:
+Finally, you can `CustomVisionTrainingKey`, `CustomVisionPredictionKey`, and `CustomVisionProjectId` key/values to any plist in your project's **main bundle** and provide the name of the plist:
 
 ```swift
 CustomVisionClient.shared.getKeysFrom(plistNamed: "SuperDuperDope")
