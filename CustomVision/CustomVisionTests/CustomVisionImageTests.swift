@@ -93,6 +93,29 @@ class CustomVisionImageTests: XCTestCase {
     }
     
     
+    
+    func testGetTaggedImagesWithTag() {
+        
+        var response: CustomVisionResponse<[Image]>?
+        let expectation = self.expectation(description: "should not fail :)")
+
+        client.getTaggedImages(withTags: tagIds) { r in
+            r.printResponseData()
+            r.printResult()
+            response = r
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: timeout)
+        
+        XCTAssertNotNil(response?.response)
+        XCTAssertTrue(response?.resource?.count ?? 6 < 6)
+        XCTAssertTrue(response!.result.isSuccess)
+        XCTAssertNotNil(response!.response)
+        XCTAssertNil(response!.error)
+    }
+
+    
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
