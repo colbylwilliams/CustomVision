@@ -1,5 +1,5 @@
 //
-//  Models.swift
+//  CustomVisionModels.swift
 //  CustomVision
 //
 //  Created by Colby L Williams on 4/14/18.
@@ -11,6 +11,9 @@ public struct CustomVisionErrorMessage : Codable {
     public let Code: String
     public let Message: String
 }
+
+
+// MARK: - Training API
 
 public struct ApiKeys: Codable {
     public let TrainingKeys: KeyPair?
@@ -521,25 +524,6 @@ public struct Tag: Codable {
 }
 
 
-fileprivate extension Optional where Wrapped: CustomStringConvertible {
-    
-    var valueOrNilString: String {
-        return self?.description ?? "nil"
-    }
-}
-
-
-fileprivate extension Optional where Wrapped == Date {
-    
-    var valueOrEmpty: String {
-        return self != nil ? "\(self!.timeIntervalSince1970)" : ""
-    }
-    
-    var valueOrNilString: String {
-        return self != nil ? "\(self!.timeIntervalSince1970)" : "nil"
-    }
-}
-
 // MARK: Equatable
 
 extension Domain: Equatable {
@@ -591,7 +575,7 @@ extension Tag: Equatable {
 }
 
 
-// MARK - CustomStringConvertible
+// MARK: CustomStringConvertible
 
 extension ApiKeys: CustomStringConvertible {
     public var description: String {
@@ -712,7 +696,6 @@ extension ImageTagCreateEntry: CustomStringConvertible {
         return "ImageTagCreateEntry\n\tImageId: \(ImageId)\n\tTagId: \(TagId)\n..."
     }
 }
-
 
 extension ImageTagCreateSummary: CustomStringConvertible {
     public var description: String {

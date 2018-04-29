@@ -9,10 +9,7 @@ import Foundation
 
 public class CustomVisionClient {
     
-    let host = "southcentralus.api.cognitive.microsoft.com"
-    let basePath = "/customvision/v1.2/Training"
-    let scheme = "https://"
-    
+    let basePath = "https://southcentralus.api.cognitive.microsoft.com/customvision"
     
     public static let shared: CustomVisionClient = {
        
@@ -70,13 +67,21 @@ public class CustomVisionClient {
 
     public var trainingKey: String = ""
     
+    public var predictionKey: String = ""
+    
     public static var defaultProjectId: String = ""
     
     public func getKeysFrom(plistNamed customPlistName: String?) {
         
         if let keys = CustomVisionKeys.tryCreateFromPlists(custom: customPlistName) {
             
-            trainingKey = keys.trainingKey!
+            if keys.hasValidTrainingKey {
+                trainingKey = keys.trainingKey!
+            }
+            
+            if keys.hasValidPredictionKey {
+                predictionKey = keys.predictionKey!
+            }
             
             if keys.hasValidProjectId {
                 CustomVisionClient.defaultProjectId = keys.projectId!
@@ -84,12 +89,52 @@ public class CustomVisionClient {
         }
     }
     
+    
+    // MARK: - Prediction API
+
+    public func predict(image imageData: Data, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+        
+        let query = getQuery(("iterationId", iterationId), ("application", applicationId))
+        
+        let api: PredictionApi = noStore ? .predictImageWithNoStore(projectId: projectId) : .predictImage(projectId: projectId)
+        
+        do {
+            
+            let request = try dataRequest(for: api, withBody: imageData, withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    public func predict(image imageUrl: URL, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+        
+        let query = getQuery(("iterationId", iterationId), ("application", applicationId))
+        
+        let api: PredictionApi = noStore ? .predictImageUrlWithNoStore(projectId: projectId) : .predictImageUrl(projectId: projectId)
+        
+        do {
+            
+            let request = try dataRequest(for: api, withBody: ImageUrl(Url: imageUrl), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    
+    // MARK: - Training API
+    
     public func createImages(inProject projectId: String = defaultProjectId, from data: Data, withTags tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> ()) {
         
         let query = getQuery(("tagIds", tagIds))
         
         do {
-            let request = try dataRequest(for: .createImagesFromData(projectId: projectId), withBody: data, withQuery: query)
+            let request = try dataRequest(for: TrainingApi.createImagesFromData(projectId: projectId), withBody: data, withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -103,7 +148,7 @@ public class CustomVisionClient {
         let query = getQuery(("imageIds", imageIds))
         
         do {
-            let request = try dataRequest(for: .deleteImages(projectId: projectId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.deleteImages(projectId: projectId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -115,7 +160,7 @@ public class CustomVisionClient {
     public func createImages(inProject projectId: String = defaultProjectId, from imageFileCreateBatch: ImageFileCreateBatch, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .createImagesFromFiles(projectId: projectId), withBody: imageFileCreateBatch)
+            let request = try dataRequest(for: TrainingApi.createImagesFromFiles(projectId: projectId), withBody: imageFileCreateBatch)
             
             return sendRequest(request, completion: completion)
         
@@ -127,7 +172,7 @@ public class CustomVisionClient {
     public func createImages(inProject projectId: String = defaultProjectId, from imageIdCreateBatch: ImageIdCreateBatch, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .createImagesFromPredictions(projectId: projectId), withBody: imageIdCreateBatch)
+            let request = try dataRequest(for: TrainingApi.createImagesFromPredictions(projectId: projectId), withBody: imageIdCreateBatch)
         
             return sendRequest(request, completion: completion)
 
@@ -140,7 +185,7 @@ public class CustomVisionClient {
     public func createImages(inProject projectId: String = defaultProjectId, from imageUrlCreateBatch: ImageUrlCreateBatch, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .createImagesFromUrls(projectId: projectId), withBody: imageUrlCreateBatch)
+            let request = try dataRequest(for: TrainingApi.createImagesFromUrls(projectId: projectId), withBody: imageUrlCreateBatch)
         
             return sendRequest(request, completion: completion)
 
@@ -154,7 +199,7 @@ public class CustomVisionClient {
         let query = getQuery(("domainId", domain), ("description", description))
 
         do {
-            let request = try dataRequest(for: .createProject, withBody: query)
+            let request = try dataRequest(for: TrainingApi.createProject, withBody: query)
         
             return sendRequest(request, completion: completion)
 
@@ -166,7 +211,7 @@ public class CustomVisionClient {
     public func getProjects(completion: @escaping (CustomVisionResponse<[Project]>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getProjects)
+            let request = try dataRequest(for: TrainingApi.getProjects)
         
             return sendRequest(request, completion: completion)
         
@@ -180,7 +225,7 @@ public class CustomVisionClient {
         let query = getQuery(("name", name), ("description", description))
         
         do {
-            let request = try dataRequest(for: .createTag(projectId: projectId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.createTag(projectId: projectId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -208,7 +253,7 @@ public class CustomVisionClient {
         let query = getQuery(("tagIds", tagIds), ("imageIds", images))
         
         do {
-            let request = try dataRequest(for: .deleteImageTags(projectId: projectId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.deleteImageTags(projectId: projectId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -220,7 +265,7 @@ public class CustomVisionClient {
     public func postImageTags(inProject projectId: String = defaultProjectId, with imageTagCreateBatch: ImageTagCreateBatch, completion: @escaping (CustomVisionResponse<ImageTagCreateSummary>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .postImageTags(projectId: projectId), withBody: imageTagCreateBatch)
+            let request = try dataRequest(for: TrainingApi.postImageTags(projectId: projectId), withBody: imageTagCreateBatch)
         
             return sendRequest(request, completion: completion)
 
@@ -232,7 +277,7 @@ public class CustomVisionClient {
     public func deleteIteration(fromProject projectId: String = defaultProjectId, withId iterationId: String, completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .deleteIteration(projectId: projectId, iterationId: iterationId))
+            let request = try dataRequest(for: TrainingApi.deleteIteration(projectId: projectId, iterationId: iterationId))
         
             return sendRequest(request, completion: completion)
         
@@ -244,7 +289,7 @@ public class CustomVisionClient {
     public func getIteration(inProject projectId: String = defaultProjectId, withId iterationId: String, completion: @escaping (CustomVisionResponse<Iteration>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getIteration(projectId: projectId, iterationId: iterationId))
+            let request = try dataRequest(for: TrainingApi.getIteration(projectId: projectId, iterationId: iterationId))
         
             return sendRequest(request, completion: completion)
         
@@ -256,7 +301,7 @@ public class CustomVisionClient {
     public func updateIteration(inProject projectId: String = defaultProjectId, withId iterationId: String, to iteration: Iteration, completion: @escaping (CustomVisionResponse<Iteration>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .updateIteration(projectId: projectId, iterationId: iterationId), withBody: iteration)
+            let request = try dataRequest(for: TrainingApi.updateIteration(projectId: projectId, iterationId: iterationId), withBody: iteration)
         
             return sendRequest(request, completion: completion)
 
@@ -270,7 +315,7 @@ public class CustomVisionClient {
         let query = getQuery(("ids", ids))
         
         do {
-            let request = try dataRequest(for: .deletePrediction(projectId: projectId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.deletePrediction(projectId: projectId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -284,7 +329,7 @@ public class CustomVisionClient {
         CustomVisionClient.defaultProjectId = ""
         
         do {
-            let request = try dataRequest(for: .deleteProject(projectId: projectId))
+            let request = try dataRequest(for: TrainingApi.deleteProject(projectId: projectId))
         
             return sendRequest(request, completion: completion)
         
@@ -296,7 +341,7 @@ public class CustomVisionClient {
     public func getProject(withId projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<Project>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getProject(projectId: projectId))
+            let request = try dataRequest(for: TrainingApi.getProject(projectId: projectId))
         
             return sendRequest(request, completion: completion)
         
@@ -308,7 +353,7 @@ public class CustomVisionClient {
     public func updateProject(withId projectId: String = defaultProjectId, to project: Project, completion: @escaping (CustomVisionResponse<Project>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .updateProject(projectId: projectId), withBody: project)
+            let request = try dataRequest(for: TrainingApi.updateProject(projectId: projectId), withBody: project)
         
             return sendRequest(request, completion: completion)
 
@@ -320,7 +365,7 @@ public class CustomVisionClient {
     public func deleteTag(fromProject projectId: String = defaultProjectId, withId tagId: String, completion: @escaping (CustomVisionResponse<Data>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .deleteTag(projectId: projectId, tagId: tagId))
+            let request = try dataRequest(for: TrainingApi.deleteTag(projectId: projectId, tagId: tagId))
         
             return sendRequest(request, completion: completion)
         
@@ -332,7 +377,7 @@ public class CustomVisionClient {
     public func getTag(inProject projectId: String = defaultProjectId, withId tagId: String, completion: @escaping (CustomVisionResponse<Tag>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getTag(projectId: projectId, tagId: tagId))
+            let request = try dataRequest(for: TrainingApi.getTag(projectId: projectId, tagId: tagId))
         
             return sendRequest(request, completion: completion)
         
@@ -344,7 +389,7 @@ public class CustomVisionClient {
     public func updateTag(inProject projectId: String = defaultProjectId, withId tagId: String, to tag: Tag, completion: @escaping (CustomVisionResponse<Tag>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .updateTag(projectId: projectId, tagId: tagId), withBody: tag)
+            let request = try dataRequest(for: TrainingApi.updateTag(projectId: projectId, tagId: tagId), withBody: tag)
         
             return sendRequest(request, completion: completion)
 
@@ -358,7 +403,7 @@ public class CustomVisionClient {
         let query = getQuery(("platform", platform.rawValue))
         
         do {
-            let request = try dataRequest(for: .exportIteration(projectId: projectId, iterationId: iterationId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.exportIteration(projectId: projectId, iterationId: iterationId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -370,7 +415,7 @@ public class CustomVisionClient {
     public func getExports(fromIteration iterationId: String, inProject projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<[Export]>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getExports(projectId: projectId, iterationId: iterationId))
+            let request = try dataRequest(for: TrainingApi.getExports(projectId: projectId, iterationId: iterationId))
         
             return sendRequest(request, completion: completion)
         
@@ -382,7 +427,7 @@ public class CustomVisionClient {
     public func getAccountInfo(completion: @escaping (CustomVisionResponse<Account>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getAccountInfo)
+            let request = try dataRequest(for: TrainingApi.getAccountInfo)
         
             return sendRequest(request, completion: completion)
         
@@ -394,7 +439,7 @@ public class CustomVisionClient {
     public func getDomain(withId domainId: String, completion: @escaping (CustomVisionResponse<Domain>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getDomain(domainId: domainId))
+            let request = try dataRequest(for: TrainingApi.getDomain(domainId: domainId))
         
             return sendRequest(request, completion: completion)
         
@@ -406,7 +451,7 @@ public class CustomVisionClient {
     public func getDomains(completion: @escaping (CustomVisionResponse<[Domain]>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getDomains)
+            let request = try dataRequest(for: TrainingApi.getDomains)
         
             return sendRequest(request, completion: completion)
         
@@ -420,7 +465,7 @@ public class CustomVisionClient {
         let query = getQuery(("threshold", threshold))
         
         do {
-            let request = try dataRequest(for: .getIterationPerformance(projectId: projectId, iterationId: iterationId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.getIterationPerformance(projectId: projectId, iterationId: iterationId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -432,7 +477,7 @@ public class CustomVisionClient {
     public func getIterations(inProject projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<[Iteration]>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .getIterations(projectId: projectId))
+            let request = try dataRequest(for: TrainingApi.getIterations(projectId: projectId))
         
             return sendRequest(request, completion: completion)
         
@@ -446,7 +491,7 @@ public class CustomVisionClient {
         let query = getQuery(("iterationId", iterationId), ("tagIds", tags), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
         do {
-            let request = try dataRequest(for: .getTaggedImages(projectId: projectId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.getTaggedImages(projectId: projectId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -460,7 +505,7 @@ public class CustomVisionClient {
         let query = getQuery(("iterationId", iterationId), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
         
         do {
-            let request = try dataRequest(for: .getUntaggedImages(projectId: projectId), withQuery: query)
+            let request = try dataRequest(for: TrainingApi.getUntaggedImages(projectId: projectId), withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -472,7 +517,7 @@ public class CustomVisionClient {
     public func queryPredictionResults(inProject projectId: String = defaultProjectId, with predictionQueryToken: PredictionQueryToken, completion: @escaping (CustomVisionResponse<PredictionQuery>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .queryPredictionResults(projectId: projectId), withBody: predictionQueryToken)
+            let request = try dataRequest(for: TrainingApi.queryPredictionResults(projectId: projectId), withBody: predictionQueryToken)
         
             return sendRequest(request, completion: completion)
 
@@ -486,7 +531,7 @@ public class CustomVisionClient {
         let query = getQuery(("iterationId", iterationId))
         
         do {
-            let request = try dataRequest(for: .quickTestImage(projectId: projectId), withBody: imageData, withQuery: query)
+            let request = try dataRequest(for: TrainingApi.quickTestImage(projectId: projectId), withBody: imageData, withQuery: query)
         
             return sendRequest(request, completion: completion)
         
@@ -500,7 +545,7 @@ public class CustomVisionClient {
         let query = getQuery(("iterationId", iterationId))
         
         do {
-            let request = try dataRequest(for: .quickTestImageUrl(projectId: projectId), withBody: imageUrl, withQuery: query)
+            let request = try dataRequest(for: TrainingApi.quickTestImageUrl(projectId: projectId), withBody: imageUrl, withQuery: query)
         
             return sendRequest(request, completion: completion)
 
@@ -512,7 +557,7 @@ public class CustomVisionClient {
     public func trainProject(withId projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<Iteration>) -> Void) {
         
         do {
-            let request = try dataRequest(for: .trainProject(projectId: projectId))
+            let request = try dataRequest(for: TrainingApi.trainProject(projectId: projectId))
         
             return sendRequest(request, completion: completion)
         
@@ -546,16 +591,16 @@ public class CustomVisionClient {
                     completion(CustomVisionResponse(request: request, data: data, response: httpResponse, result: .failure(error)))
                 }
             } else {
-                completion(CustomVisionResponse.init(request: request, data: data, response: httpResponse, result: .failure(CustomVisionClientError.unknown)))
+                completion(CustomVisionResponse(request: request, data: data, response: httpResponse, result: .failure(CustomVisionClientError.unknown)))
             }
         }.resume()
     }
     
-    fileprivate func dataRequest(for api: TrainingApi, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
+    fileprivate func dataRequest(for api: CustomVisionApi, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
         return try self._dataRequest(for: api, withQuery: query, andHeaders: headers)
     }
     
-    fileprivate func dataRequest<T:Codable>(for api: TrainingApi, withBody body: T? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
+    fileprivate func dataRequest<T:Codable>(for api: CustomVisionApi, withBody body: T? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
         
         if let body = body {
             
@@ -567,7 +612,7 @@ public class CustomVisionClient {
         return try self._dataRequest(for: api, withQuery: query, andHeaders: headers)
     }
 
-    fileprivate func dataRequest(for api: TrainingApi, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
+    fileprivate func dataRequest<T:CustomVisionApi>(for api: T, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
         
         if let body = body {
             
@@ -579,13 +624,11 @@ public class CustomVisionClient {
 
     let boundary = "Boundary-\(UUID().uuidString)"
     
-    fileprivate func _dataRequest(for api: TrainingApi, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
-        
-        guard !trainingKey.isEmpty else { throw CustomVisionClientError.noTrainingKey }
+    fileprivate func _dataRequest(for api: CustomVisionApi, withBody body: Data? = nil, withQuery query: String? = nil, andHeaders headers: [String:String]? = nil) throws -> URLRequest {
         
         guard api.hasValidIds else { throw CustomVisionClientError.invalidIds }
         
-        var urlString = scheme + host + basePath + api.path
+        var urlString = api.path(withBase: basePath)
         
         if let queryString = query, !queryString.isEmpty {
             urlString = urlString + queryString
@@ -599,13 +642,11 @@ public class CustomVisionClient {
         
         request.httpMethod = api.method.rawValue
         
-        if case TrainingApi.createImagesFromData = api {
-            request.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        } else {
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
+        request.addValue(api.contentType(boundary), forHTTPHeaderField: "Content-Type")
         
-        request.addValue(trainingKey, forHTTPHeaderField: "Training-key")
+        let headerValue = try api.headerValue(trainingKey: trainingKey, predictionKey: predictionKey)
+        
+        request.addValue(headerValue, forHTTPHeaderField: api.headerKey)
         
         if let headers = headers {
             for header in headers {

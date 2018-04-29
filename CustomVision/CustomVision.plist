@@ -6,5 +6,7 @@
 	<string>CUSTOM_VISION_PROJECT_ID</string>
 	<key>CustomVisionTrainingKey</key>
 	<string>CUSTOM_VISION_TRAINING_KEY</string>
+	<key>CustomVisionPredictionKey</key>
+	<string>CUSTOM_VISION_PREDICTION_KEY</string>
 </dict>
 </plist>

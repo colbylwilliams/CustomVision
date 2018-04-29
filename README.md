@@ -5,7 +5,7 @@ Swift SDK for Microsoft's [Custom Vision Service](https://azure.microsoft.com/en
 ## Features
 
 - [x] [Custom Vision Training API 1.2](https://southcentralus.dev.cognitive.microsoft.com/docs/services/f2d62aa3b93843d79e948fe87fa89554/operations/5a3044ee08fa5e06b890f11f)
-- [ ] [Custom Vision Prediction API 1.1](https://southcentralus.dev.cognitive.microsoft.com/docs/services/57982f59b5964e36841e22dfbfe78fc1/operations/5a3044f608fa5e06b890f164)
+- [x] [Custom Vision Prediction API 1.1](https://southcentralus.dev.cognitive.microsoft.com/docs/services/57982f59b5964e36841e22dfbfe78fc1/operations/5a3044f608fa5e06b890f164)
 - [x] Work with `UIKit` & `Foundation` objects like `UIImage`
 - [x] Export & Download `CoreML` models for use offline
 - [ ] Sample App
@@ -88,6 +88,8 @@ Simply add the `CustomVisionTrainingKey` and `CustomVisionProjectId` keys and pr
     <string>CUSTOM_VISION_PROJECT_ID</string>
     <key>CustomVisionTrainingKey</key>
     <string>CUSTOM_VISION_TRAINING_KEY</string>
+    <key>CustomVisionPredictionKey</key>
+    <string>CUSTOM_VISION_PREDICTION_KEY</string>
 ...
 ```
 
@@ -104,6 +106,8 @@ Or add a [`CustomVision.plist`](https://github.com/colbylwilliams/CustomVision/b
     <string>CUSTOM_VISION_PROJECT_ID</string>
     <key>CustomVisionTrainingKey</key>
     <string>CUSTOM_VISION_TRAINING_KEY</string>
+    <key>CustomVisionPredictionKey</key>
+    <string>CUSTOM_VISION_PREDICTION_KEY</string>
 </dict>
 </plist>
 ```
