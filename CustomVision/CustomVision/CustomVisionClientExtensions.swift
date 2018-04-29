@@ -65,11 +65,14 @@ public extension CustomVisionClient {
     }
 
     #if os(macOS)
-    func UIImageJPEGRepresentation(_ image: NSImage, _ scale: Float) -> Data {
+    func UIImageJPEGRepresentation(_ image: NSImage, _ scale: Float) -> Data? {
         
-        let bits = image.representations.first as! NSBitmapImageRep
-        let data = bits.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:])!
-        return data
+        if let bits = image.representations.first as? NSBitmapImageRep,
+            let data = bits.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:]) {
+            
+            return data
+        }
+        return nil
     }
     #endif
 }
