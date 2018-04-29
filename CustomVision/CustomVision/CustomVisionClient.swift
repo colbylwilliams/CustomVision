@@ -9,8 +9,6 @@ import Foundation
 
 public class CustomVisionClient {
     
-    let basePath = "https://southcentralus.api.cognitive.microsoft.com/customvision"
-    
     public static let shared: CustomVisionClient = {
        
         let client = CustomVisionClient()
@@ -628,15 +626,7 @@ public class CustomVisionClient {
         
         guard api.hasValidIds else { throw CustomVisionClientError.invalidIds }
         
-        var urlString = api.path(withBase: basePath)
-        
-        if let queryString = query, !queryString.isEmpty {
-            urlString = urlString + queryString
-        }
-
-        print(urlString)
-        
-        guard let url = URL(string: urlString) else { throw CustomVisionClientError.urlError(urlString) }
+        guard let url = api.url(withQuery: query) else { throw CustomVisionClientError.urlError(api.urlString(withQuery: query)) }
         
         var request = URLRequest(url: url)
         

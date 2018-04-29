@@ -22,6 +22,17 @@ extension String {
     }
 }
 
+extension Optional where Wrapped == String {
+    
+    var isNilOrEmpty: Bool {
+        return self != nil && !self!.isEmpty
+    }
+    
+    var valueOrEmpty: String {
+        return self != nil ? self! : ""
+    }
+}
+
 extension Optional where Wrapped: CustomStringConvertible {
     
     var valueOrNilString: String {

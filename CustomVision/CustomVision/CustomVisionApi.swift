@@ -9,6 +9,7 @@ import Foundation
 
 protocol CustomVisionApi {
     static var name: String { get }
+    static var region: String { get }
     static var version: String { get }
     static var headerKey: String { get }
     var path: String { get }
@@ -19,8 +20,11 @@ protocol CustomVisionApi {
 }
 
 extension CustomVisionApi {
-    func path(withBase basePath: String) -> String {
-        return "/\(Self.version)/\(Self.name)/\(self.path)"
+    func url(withQuery query: String? = nil) -> URL? {
+        return URL(string: urlString(withQuery: query))
+    }
+    func urlString(withQuery query: String? = nil) -> String {
+        return "https://\(Self.region).api.cognitive.microsoft.com/customvision/\(Self.version)/\(Self.name)/\(self.path)\(query.valueOrEmpty)"
     }
     var headerKey: String {
         return Self.headerKey
@@ -36,6 +40,7 @@ enum PredictionApi: CustomVisionApi {
     
     
     static var name: String = "Prediction"
+    static var region: String = "southcentralus"
     static var version: String = "v1.1"
     static var headerKey: String = "Prediction-key"
     
@@ -113,6 +118,7 @@ enum TrainingApi: CustomVisionApi {
     case trainProject(projectId: String)
     
     static var name: String = "Training"
+    static var region: String = "southcentralus"
     static var version: String = "v1.2"
     static var headerKey: String = "Training-key"
     
