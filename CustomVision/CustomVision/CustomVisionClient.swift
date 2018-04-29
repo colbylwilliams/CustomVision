@@ -712,14 +712,14 @@ fileprivate extension Optional where Wrapped == String {
                 return
             }
             
-            var queryValueString = "\(queryValue)"
+            var queryValueString = "\(queryValue)".replacingOccurrences(of: " ", with: "%20")
             
             if let queryValueArray = queryValue as? [String], !queryValueArray.isEmpty {
                 queryValueString = queryValueArray.joined(separator: ",").replacingOccurrences(of: "\\\"", with: "")
             }
             
-            if !queryValueString.isEmpty, let queryValueEncoded = queryValueString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-                self = "?\(queryKey)=\(queryValueEncoded))"
+            if !queryValueString.isEmpty {
+                self = "?\(queryKey)=\(queryValueString)"
             }
         } else {
             self!.add(queryKey, queryValue)
@@ -735,17 +735,17 @@ fileprivate extension String {
                 return
             }
 
-            var queryValueString = "\(queryValue)"
+            var queryValueString = "\(queryValue)".replacingOccurrences(of: " ", with: "%20")
             
             if let queryValueArray = queryValue as? [String], !queryValueArray.isEmpty {
                 queryValueString = queryValueArray.joined(separator: ",").replacingOccurrences(of: "\\\"", with: "")
             }
 
-            if !queryValueString.isEmpty, let queryValueEncoded = queryValueString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+            if !queryValueString.isEmpty {
                 if self.contains("?") {
-                    self += "&\(queryKey)=\(queryValueEncoded)"
+                    self += "&\(queryKey)=\(queryValueString)"
                 } else {
-                    self = "?\(queryKey)=\(queryValueEncoded)"
+                    self = "?\(queryKey)=\(queryValueString)"
                 }
             }
         }
