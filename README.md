@@ -30,7 +30,7 @@ $ brew update
 $ brew install carthage
 ```
 
-To integrate Willow into your Xcode project using Carthage, specify it in your [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile):
+To integrate CustomVision into your Xcode project using Carthage, specify it in your [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile):
 
 ```
 github "colbylwilliams/CustomVision"
