@@ -20,7 +20,7 @@ public extension CustomVisionClient {
     
     
     public func predict(image: UIImage, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
-        if let data = UIImageJPEGRepresentation(image, 1.0) {
+        if let data = image.jpegData(compressionQuality: 1.0)  {
             return self.predict(image: data, forApplication: applicationId, forIteration: iterationId, inProject: projectId, withoutStoring: noStore, completion: completion)
         } else {
             completion(CustomVisionResponse(CustomVisionClientError.unknown))
@@ -30,7 +30,7 @@ public extension CustomVisionClient {
     
     public func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
     
-        let entries = images.map { ImageFileCreateEntry(Name: nil, Contents: UIImageJPEGRepresentation($0, 1.0), TagIds: nil) }
+        let entries = images.map { ImageFileCreateEntry(Name: nil, Contents: $0.jpegData(compressionQuality: 1.0), TagIds: nil) }
         
         let batch = ImageFileCreateBatch(Images: entries, TagIds: tagIds)
         
