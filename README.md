@@ -33,7 +33,7 @@ $ brew install carthage
 To integrate CustomVision into your Xcode project using Carthage, specify it in your [Cartfile](https://github.com/Carthage/Carthage/blob/master/Documentation/Artifacts.md#cartfile):
 
 ```
-github "colbylwilliams/CustomVision"
+github "hieumoscow/CustomVision"
 ```
 
 Run `carthage update` to build the framework and drag the built `CustomVision.framework` into your Xcode project.
@@ -72,7 +72,7 @@ CustomVisionClient.shared.getIterations { r in
 
 ### Plist File
 
-Alternatively, you can provide these values in your project's `info.plist`, a separate [`CustomVision.plist`](https://github.com/colbylwilliams/CustomVision/blob/master/CustomVision/CustomVision.plist), or provide the name of your own plist file to use.
+Alternatively, you can provide these values in your project's `info.plist`, a separate [`CustomVision.plist`](https://github.com/hieumoscow/CustomVision/blob/master/CustomVision/CustomVision.plist), or provide the name of your own plist file to use.
 
 Simply add the `CustomVisionTrainingKey`, `CustomVisionPredictionKey`, and `CustomVisionProjectId` keys and provide your Training Key, Prediction Key, and default Project ID respectively.
 
