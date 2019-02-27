@@ -46,7 +46,7 @@ public class CustomVisionClient {
     
     let session: URLSession = URLSession(configuration: URLSessionConfiguration.default)
     
-    let pollDelay: Double = 3
+    let pollDelay: Double = 5
     
     fileprivate
     var _modelName = "custom.mlmodel"
