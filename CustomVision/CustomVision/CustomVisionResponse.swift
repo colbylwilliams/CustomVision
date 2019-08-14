@@ -15,13 +15,9 @@ public struct CustomVisionResponse<T> {
     
     public let response: HTTPURLResponse?
     
-    public let result: CustomVisionResult<T>
+    public let result: Result<T, Error>
     
-    public var error: Error? { return result.error }
-    
-    public var resource: T?  { return result.resource }
-    
-    public init(request: URLRequest?, data: Data?, response: HTTPURLResponse?, result: CustomVisionResult<T>) {
+    public init(request: URLRequest?, data: Data?, response: HTTPURLResponse?, result: Result<T, Error>) {
         self.request = request
         self.data = data
         self.response = response
@@ -34,35 +30,6 @@ public struct CustomVisionResponse<T> {
     
     public init (_ error: Error) {
         self.init(request: nil, data: nil, response: nil, result: .failure(error))
-    }
-}
-
-
-public enum CustomVisionResult<T> {
-    case success(T)
-    case failure(Error)
-    
-    public var isSuccess: Bool {
-        switch self {
-        case .success: return true
-        case .failure: return false
-        }
-    }
-    
-    public var isFailure: Bool { return !isSuccess }
-    
-    public var resource: T? {
-        switch self {
-        case .success(let resource): return resource
-        case .failure: return nil
-        }
-    }
-    
-    public var error: Error? {
-        switch self {
-        case .success: return nil
-        case .failure(let error): return error
-        }
     }
 }
 

@@ -695,7 +695,7 @@ public class CustomVisionClient {
             } else {
                 completion(false, "¯\\_(ツ)_/¯")
             }
-        } else if let error = response.error {
+        } else if case .failure(let error) = response.result {
             completion(false, error.localizedDescription)
         } else {
             completion(false, "¯\\_(ツ)_/¯")

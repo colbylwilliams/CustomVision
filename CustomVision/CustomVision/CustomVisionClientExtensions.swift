@@ -40,17 +40,11 @@ public extension CustomVisionClient {
         
         self.createTag(inProject: projectId, withName: tagName, andDescription: nil) { r in
             
-            if let tagId = r.resource?.Id, !tagId.isEmpty {
-                
-                return self.createImages(inProject: projectId, from: images, withTagIds: [tagId], completion: completion)
-            
-            } else if let error = r.error {
-                
-                completion(CustomVisionResponse(request: r.request, data: r.data, response: r.response, result: .failure(error)))
-            
-            } else {
-             
-                completion(CustomVisionResponse(request: r.request, data: r.data, response: r.response, result: .failure(CustomVisionClientError.unknown)))
+            switch r.result {
+            case .success(let tag):
+                return self.createImages(inProject: projectId, from: images, withTagIds: [tag.Id], completion: completion)
+            case .failure(let error):
+                completion(CustomVisionResponse(request: r.request, data: r.data, response: r.response, result: .failure(error)));
             }
         }
     }
