@@ -69,14 +69,14 @@ public enum CustomVisionResult<T> {
 
 public extension CustomVisionResponse {
     
-    public func printResponseData() {
+    func printResponseData() {
         if let data = self.data {
             print("::::: Data :::::\n\(String(data: data, encoding: .utf8) ?? "fail")")
         } else {
             print("::::: Data :::::\nnil")
         }
     }
-    public func printResult() {
+    func printResult() {
         switch self.result {
         case let .success(resource): print("::::: ✅ Success :::::")
         if let resources = resource as? [CustomStringConvertible] {

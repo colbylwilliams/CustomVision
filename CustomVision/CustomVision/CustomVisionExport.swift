@@ -12,7 +12,7 @@ import CoreML
 
 public extension CustomVisionClient {
     
-    public func getModelUrl(fileManager: FileManager = FileManager.default, compiled: Bool = true) -> URL? {
+    func getModelUrl(fileManager: FileManager = FileManager.default, compiled: Bool = true) -> URL? {
         
         let appSupportDirectory = try! fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         
@@ -24,7 +24,7 @@ public extension CustomVisionClient {
     }
     
     
-    public func trainAndDownloadCoreMLModel(withName name: String, progressUpdate update: @escaping (String) -> Void, _ completion: @escaping (Bool, String) -> Void) {
+    func trainAndDownloadCoreMLModel(withName name: String, progressUpdate update: @escaping (String) -> Void, _ completion: @escaping (Bool, String) -> Void) {
         
         modelName = name
         

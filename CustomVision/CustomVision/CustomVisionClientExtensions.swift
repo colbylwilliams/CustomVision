@@ -19,25 +19,24 @@ public extension CustomVisionClient {
     #endif
     
     
-    public func predict(image: UIImage, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
-        if let data = UIImageJPEGRepresentation(image, 1.0) {
+    func predict(image: UIImage, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+        if let data = image.jpegData(compressionQuality: 1.0) {
             return self.predict(image: data, forApplication: applicationId, forIteration: iterationId, inProject: projectId, withoutStoring: noStore, completion: completion)
         } else {
             completion(CustomVisionResponse(CustomVisionClientError.unknown))
         }
     }
 
+    func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
     
-    public func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
-    
-        let entries = images.map { ImageFileCreateEntry(Name: nil, Contents: UIImageJPEGRepresentation($0, 1.0), TagIds: nil) }
+        let entries = images.map { ImageFileCreateEntry(Name: nil, Contents: $0.jpegData(compressionQuality: 1.0), TagIds: nil) }
         
         let batch = ImageFileCreateBatch(Images: entries, TagIds: tagIds)
         
         return self.createImages(inProject: projectId, from: batch, completion: completion)
     }
 
-    public func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withNewTagNamed tagName: String, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
+    func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withNewTagNamed tagName: String, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         
         self.createTag(inProject: projectId, withName: tagName, andDescription: nil) { r in
             
@@ -56,23 +55,24 @@ public extension CustomVisionClient {
         }
     }
     
-    public func createImage(inProject projectId: String = defaultProjectId, from image: UIImage, withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
+    func createImage(inProject projectId: String = defaultProjectId, from image: UIImage, withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         return self.createImages(inProject: projectId, from: [image], withTagIds: tagIds, completion: completion)
     }
     
-    public func createImage(inProject projectId: String = defaultProjectId, from image: UIImage, withNewTagNamed tagName: String, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
+    func createImage(inProject projectId: String = defaultProjectId, from image: UIImage, withNewTagNamed tagName: String, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
         return self.createImages(inProject: projectId, from: [image], withNewTagNamed: tagName, completion: completion)
     }
+}
 
-    #if os(macOS)
-    func UIImageJPEGRepresentation(_ image: NSImage, _ scale: Float) -> Data? {
-        
-        if let bits = image.representations.first as? NSBitmapImageRep,
-            let data = bits.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:]) {
+#if os(macOS)
+fileprivate extension NSImage {
+    func jpegData(compressionQuality: CGFloat) -> Data? {
+        if let bits = self.representations.first as? NSBitmapImageRep,
+            let data = bits.representation(using: .jpeg, properties: [:]) {
             
             return data
         }
         return nil
     }
-    #endif
 }
+#endif
