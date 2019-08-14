@@ -259,3 +259,22 @@ enum TrainingApi: CustomVisionApi {
         }
     }
 }
+
+public enum AzureRegion : String {
+    case westUS2        = "westus2"
+    case eastUS         = "eastus"
+    case eastUS2        = "eastus2"
+    case southCentralUS = "southcentralus"
+    case westEurope     = "westeurope"
+    case northEurope    = "northeurope"
+    case southeastAsia  = "southeastasia"
+    case australiaEast  = "australiaeast"
+    case centralIndia   = "centralindia"
+    case ukSouth        = "uksouth"
+    case japanEast      = "japaneast"
+    case northCentralUS = "northcentralus"
+    
+    var host: String {
+        return self.rawValue + ".api.cognitive.microsoft.com"
+    }
+}

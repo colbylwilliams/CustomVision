@@ -8,280 +8,372 @@
 import Foundation
 
 public struct CustomVisionErrorMessage : Codable {
-    public let Code: String
-    public let Message: String
+    public let code: String
+    public let message: String
 }
 
 
 // MARK: - Training API
 
 public struct ApiKeys: Codable {
-    public let TrainingKeys: KeyPair?
-    public let PredictionKeys: KeyPair?
+    public let trainingKeys: KeyPair?
+    public let predictionKeys: KeyPair?
     
-    public init(TrainingKeys: KeyPair?, PredictionKeys: KeyPair?) {
-        self.TrainingKeys = TrainingKeys
-        self.PredictionKeys = PredictionKeys
+    public init(trainingKeys: KeyPair?, predictionKeys: KeyPair?) {
+        self.trainingKeys = trainingKeys
+        self.predictionKeys = predictionKeys
     }
 }
 
 public struct KeyPair: Codable {
-    public let PrimaryKey: String?
-    public let SecondaryKey: String?
+    public let primaryKey: String?
+    public let secondaryKey: String?
     
-    public init(PrimaryKey: String?, SecondaryKey: String?) {
-        self.PrimaryKey = PrimaryKey
-        self.SecondaryKey = SecondaryKey
+    public init(primaryKey: String?, secondaryKey: String?) {
+        self.primaryKey = primaryKey
+        self.secondaryKey = secondaryKey
     }
 }
 
 public struct Account: Codable {
-    public let UserName: String?
-    public let Email: String?
-    public let Keys: ApiKeys?
-    public let Quotas: AccountQuota?
+    public let userName: String?
+    public let email: String?
+    public let keys: ApiKeys?
+    public let quotas: AccountQuota?
     
-    public init(UserName: String?, Email: String?, Keys: ApiKeys?, Quotas: AccountQuota?) {
-        self.UserName = UserName
-        self.Email = Email
-        self.Keys = Keys
-        self.Quotas = Quotas
+    public init(userName: String?, email: String?, keys: ApiKeys?, quotas: AccountQuota?) {
+        self.userName = userName
+        self.email = email
+        self.keys = keys
+        self.quotas = quotas
     }
 }
 
 public struct AccountQuota: Codable {
-    public let Tier: String?
-    public let Projects: Quota?
-    public let Predictions: Quota?
-    public let PerProject: [PerProjectQuota]?
+    public let tier: String?
+    public let projects: Quota?
+    public let predictions: Quota?
+    public let perProject: [PerProjectQuota]?
     
-    public init(Tier: String?, Projects: Quota?, Predictions: Quota?, PerProject: [PerProjectQuota]?) {
-        self.Tier = Tier
-        self.Projects = Projects
-        self.Predictions = Predictions
-        self.PerProject = PerProject
+    public init(tier: String?, projects: Quota?, predictions: Quota?, perProject: [PerProjectQuota]?) {
+        self.tier = tier
+        self.projects = projects
+        self.predictions = predictions
+        self.perProject = perProject
     }
 }
 
 public struct Quota: Codable {
-    public let Total: Int
-    public let Used: Int
-    public let TimeUntilReset: String?
+    public let total: Int
+    public let used: Int
+    public let timeUntilReset: String?
     
-    public init(Total: Int, Used: Int, TimeUntilReset: String?) {
-        self.Total = Total
-        self.Used = Used
-        self.TimeUntilReset = TimeUntilReset
+    public init(total: Int, used: Int, timeUntilReset: String?) {
+        self.total = total
+        self.used = used
+        self.timeUntilReset = timeUntilReset
     }
 }
 
 public struct PerProjectQuota: Codable {
-    public let ProjectId: String
-    public let Iterations: Quota?
-    public let Images: Quota?
-    public let Tags: Quota?
+    public let projectId: String
+    public let iterations: Quota?
+    public let images: Quota?
+    public let tags: Quota?
     
-    public init(ProjectId: String, Iterations: Quota?, Images: Quota?, Tags: Quota?) {
-        self.ProjectId = ProjectId
-        self.Iterations = Iterations
-        self.Images = Images
-        self.Tags = Tags
+    public init(projectId: String, iterations: Quota?, images: Quota?, tags: Quota?) {
+        self.projectId = projectId
+        self.iterations = iterations
+        self.images = images
+        self.tags = tags
     }
 }
 
 public struct Domain: Codable {
-    public let Id: String
-    public let Name: String?
-    public let Exportable: Bool
+    public let id: String
+    public let name: String?
+    public let type: DomainType
+    public let exportable: Bool
+    public let enabled: Bool
     
-    public init(Id: String, Name: String?, Exportable: Bool) {
-        self.Id = Id
-        self.Name = Name
-        self.Exportable = Exportable
-    }
-}
-
-public struct Image: Codable {
-    public let Id: String
-    public let Created: Date
-    public let Width: Int
-    public let Height: Int
-    public let ImageUri: URL?
-    public let ThumbnailUri: URL?
-    public let Tags: [ImageTag]?
-    public let Predictions: [PredictionTag]?
-    
-    public init(Id: String, Created: Date, Width: Int, Height: Int, ImageUri: URL?, ThumbnailUri: URL?, Tags: [ImageTag]?, Predictions: [PredictionTag]?) {
-        self.Id = Id
-        self.Created = Created
-        self.Width = Width
-        self.Height = Height
-        self.ImageUri = ImageUri
-        self.ThumbnailUri = ThumbnailUri
-        self.Tags = Tags
-        self.Predictions = Predictions
-    }
-}
-
-public struct ImageTag: Codable {
-    public let TagId: String
-    public let Created: Date
-    
-    public init(TagId: String, Created: Date) {
-        self.TagId = TagId
-        self.Created = Created
-    }
-}
-
-public struct PredictionTag: Codable {
-    public let TagId: String
-    public let Tag: String?
-    public let Probability: Float
-    
-    public init(TagId: String, Tag: String?, Probability: Float) {
-        self.TagId = TagId
-        self.Tag = Tag
-        self.Probability = Probability
-    }
-}
-
-public struct ImageCreateSummary: Codable {
-    public let IsBatchSuccessful: Bool
-    public let Images: [ImageCreateResult]?
-    
-    public init(IsBatchSuccessful: Bool, Images: [ImageCreateResult]?) {
-        self.IsBatchSuccessful = IsBatchSuccessful
-        self.Images = Images
-    }
-}
-
-public struct ImageCreateResult: Codable {
-    public let SourceUrl: String?
-    public let Status: Status
-    public let Image: Image?
-    
-    public enum Status: String, Codable {
-        case ok = "OK"
-        case okDuplicate = "OKDuplicate"
-        case errorSource = "ErrorSource"
-        case errorImageFormat = "ErrorImageFormat"
-        case errorImageSize = "ErrorImageSize"
-        case errorStorage = "ErrorStorage"
-        case errorLimitExceed = "ErrorLimitExceed"
-        case errorTagLimitExceed = "ErrorTagLimitExceed"
-        case errorUnknown = "ErrorUnknown"
+    public enum DomainType: String, Codable {
+        case classification  = "Classification"
+        case objectDetection = "ObjectDetection"
     }
     
-    public init(SourceUrl: String?, Status: Status, Image: Image?) {
-        self.SourceUrl = SourceUrl
-        self.Status = Status
-        self.Image = Image
-    }
-}
-
-public struct ImageFileCreateBatch: Codable {
-    public let Images: [ImageFileCreateEntry]?
-    public let TagIds: [String]?
-    
-    public init(Images: [ImageFileCreateEntry]?, TagIds: [String]?) {
-        self.Images = Images
-        self.TagIds = TagIds
-    }
-}
-
-public struct ImageFileCreateEntry: Codable {
-    public let Name: String?
-    public let Contents: Data?
-    public let TagIds: [String]?
-    
-    public init(Name: String?, Contents: Data?, TagIds: [String]?) {
-        self.Name = Name
-        self.Contents = Contents
-        self.TagIds = TagIds
-    }
-}
-
-public struct ImageUrlCreateBatch: Codable {
-    public let Images: [ImageUrlCreateEntry]?
-    public let TagIds: [String]?
-    
-    public init(Images: [ImageUrlCreateEntry]?, TagIds: [String]?) {
-        self.Images = Images
-        self.TagIds = TagIds
-    }
-}
-
-public struct ImageUrlCreateEntry: Codable {
-    public let Url: URL?
-    public let TagIds: [String]?
-    
-    public init(Url: URL?, TagIds: [String]?) {
-        self.Url = Url
-        self.TagIds = TagIds
-    }
-}
-
-public struct ImageIdCreateBatch: Codable {
-    public let Images: [ImageIdCreateEntry]?
-    public let TagIds: [String]?
-    
-    public init(Images: [ImageIdCreateEntry]?, TagIds: [String]?) {
-        self.Images = Images
-        self.TagIds = TagIds
-    }
-}
-
-public struct ImageIdCreateEntry: Codable {
-    public let Id: String?
-    public let TagIds: [String]?
-    
-    public init(Id: String?, TagIds: [String]?) {
-        self.Id = Id
-        self.TagIds = TagIds
+    public init(id: String, name: String?, type: DomainType, exportable: Bool, enabled: Bool) {
+        self.id = id
+        self.name = name
+        self.type = type
+        self.exportable = exportable
+        self.enabled = enabled
     }
 }
 
 public struct ImageTagCreateBatch: Codable {
-    public let Tags: [ImageTagCreateEntry]?
+    public let tags: [ImageTagCreateEntry]?
     
-    public init(Tags: [ImageTagCreateEntry]?) {
-        self.Tags = Tags
+    public init(tags: [ImageTagCreateEntry]?) {
+        self.tags = tags
     }
 }
 
 public struct ImageTagCreateEntry: Codable {
-    public let ImageId: String
-    public let TagId: String
+    public let imageId: String
+    public let tagId: String
     
-    public init(ImageId: String, TagId: String) {
-        self.ImageId = ImageId
-        self.TagId = TagId
+    public init(imageId: String, tagId: String) {
+        self.imageId = imageId
+        self.tagId = tagId
     }
 }
 
-
 public struct ImageTagCreateSummary: Codable {
-    public let Created: [ImageTagCreateEntry]?
-    public let Duplicated: [ImageTagCreateEntry]?
-    public let Exceeded: [ImageTagCreateEntry]?
+    public let created: [ImageTagCreateEntry]?
+    public let duplicated: [ImageTagCreateEntry]?
+    public let exceeded: [ImageTagCreateEntry]?
     
-    public init(Created: [ImageTagCreateEntry]?, Duplicated: [ImageTagCreateEntry]?, Exceeded: [ImageTagCreateEntry]?) {
-        self.Created = Created
-        self.Duplicated = Duplicated
-        self.Exceeded = Exceeded
+    public init(created: [ImageTagCreateEntry]?, duplicated: [ImageTagCreateEntry]?, exceeded: [ImageTagCreateEntry]?) {
+        self.created = created
+        self.duplicated = duplicated
+        self.exceeded = exceeded
     }
+}
+
+public struct ImageRegionCreateBatch: Codable {
+    public let regions: [ImageRegionCreateEntry]?
+}
+
+public struct ImageRegionCreateEntry: Codable {
+    public let imageId: String
+    public let tagId: String
+    public let left: Float
+    public let top: Float
+    public let width: Float
+    public let height: Float
+}
+
+public struct ImageRegionCreateSummary: Codable {
+    public let created: [ImageRegionCreateEntry]?
+    public let duplicated: [ImageRegionCreateEntry]?
+    public let exceeded: [ImageRegionCreateEntry]?
+    
+    public init(created: [ImageRegionCreateEntry]?, duplicated: [ImageRegionCreateEntry]?, exceeded: [ImageRegionCreateEntry]?) {
+        self.created = created
+        self.duplicated = duplicated
+        self.exceeded = exceeded
+    }
+}
+
+public struct ImageRegionCreateResult: Codable {
+    public let imageId: String
+    public let regionId: String
+    public let tagName: String
+    public let created: Date
+    public let tagId: String
+    public let left: Float
+    public let top: Float
+    public let width: Float
+    public let height: Float
+}
+
+public struct Image: Codable {
+    public let id: String
+    public let created: Date
+    public let width: Int
+    public let height: Int
+    public let resizedImageUri: Url?
+    public let thumbnailUri: URL?
+    public let originalImageUri: URL?
+    public let tags: [ImageTag]?
+    public let regions: [ImageRegion]?
+    
+    public init(id: String, created: Date, width: Int, height: Int, originalImageUri: URL?, thumbnailUri: URL?, tags: [ImageTag]?, predictions: [PredictionTag]?) {
+        self.id = id
+        self.created = created
+        self.width = width
+        self.height = height
+        self.imageUri = imageUri
+        self.thumbnailUri = thumbnailUri
+        self.tags = tags
+        self.predictions = predictions
+    }
+}
+
+public struct ImageTag: Codable {
+    public let tagId: String
+    public let tagName: String
+    public let created: Date
+    
+    public init(tagId: String, created: Date) {
+        self.tagId = tagId
+        self.created = created
+    }
+}
+
+public struct ImageRegion {
+    public let regionId: String?
+    public let tagName: String?
+    public let created: Date?
+    public let tagId: String
+    public let left: Float
+    public let top: Float
+    public let width: Float
+    public let height: Float
+}
+
+public struct PredictionTag: Codable {
+    public let tagId: String
+    public let tag: String?
+    public let probability: Float
+    
+    public init(tagId: String, tag: String?, probability: Float) {
+        self.tagId = tagId
+        self.tag = tag
+        self.probability = probability
+    }
+}
+
+public struct ImageCreateSummary: Codable {
+    public let isBatchSuccessful: Bool
+    public let images: [ImageCreateResult]?
+    
+    public init(isBatchSuccessful: Bool, images: [ImageCreateResult]?) {
+        self.isBatchSuccessful = isBatchSuccessful
+        self.images = images
+    }
+}
+
+public struct ImageCreateResult: Codable {
+    public let sourceUrl: String?
+    public let status: ImageCreateStatus
+    public let image: Image?
+}
+
+public struct ImageFileCreateBatch: Codable {
+    public let images: [ImageFileCreateEntry]?
+    public let tagIds: [String]?
+    
+    public init(images: [ImageFileCreateEntry]?, tagIds: [String]?) {
+        self.images = images
+        self.tagIds = tagIds
+    }
+}
+
+public struct ImageFileCreateEntry: Codable {
+    public let name: String?
+    public let contents: Data?
+    public let tagIds: [String]?
+    public let regions: [Region]?
+    
+    public init(name: String?, contents: Data?, tagIds: [String]?) {
+        self.name = name
+        self.contents = contents
+        self.tagIds = tagIds
+    }
+}
+
+public struct Region: Codable {
+    public let tagId: String
+    public let left: Float
+    public let top: Float
+    public let width: Float
+    public let height: Float
+}
+
+public struct ImageUrlCreateBatch: Codable {
+    public let images: [ImageUrlCreateEntry]?
+    public let tagIds: [String]?
+    
+    public init(images: [ImageUrlCreateEntry]?, tagIds: [String]?) {
+        self.images = images
+        self.tagIds = tagIds
+    }
+}
+
+public struct ImageUrlCreateEntry: Codable {
+    public let url: URL
+    public let tagIds: [String]?
+    public let regions: [Region]?
+    
+    public init(url: URL?, tagIds: [String]?) {
+        self.url = url
+        self.tagIds = tagIds
+    }
+}
+
+public struct ImageIdCreateBatch: Codable {
+    public let images: [ImageIdCreateEntry]?
+    public let tagIds: [String]?
+    
+    public init(images: [ImageIdCreateEntry]?, tagIds: [String]?) {
+        self.images = images
+        self.tagIds = tagIds
+    }
+}
+
+public struct ImageIdCreateEntry: Codable {
+    public let id: String?
+    public let tagIds: [String]?
+    public let regions: [Region]?
+    
+    public init(id: String?, tagIds: [String]?) {
+        self.id = id
+        self.tagIds = tagIds
+    }
+}
+
+public struct ImageRegionProposal: Codable {
+    public let projectId: String
+    public let imageId: String
+    public let proposals: [RegionProposal]?
+}
+
+public struct RegionProposal: Codable {
+    public let confidence: Float
+    public let boundingBox: BoundingBox
+}
+
+public struct BoundingBox: Codable {
+    public let left: Float
+    public let top: Float
+    public let width: Float
+    public let height: Float
+}
+
+public struct ImageUrl: Codable {
+    public let url: URL
+    
+    public init(url: URL) {
+        self.url = url
+    }
+}
+
+public struct ImagePrediction: Codable {
+    public let id: String
+    public let project: String
+    public let iteration: String
+    public let created: Date
+    public let predictions: [Prediction]?
+}
+
+public struct Prediction: Codable {
+    public let probability: Float
+    public let tagId: String
+    public let tagName: String
+    public let boundingBox: BoundingBox
 }
 
 public struct PredictionQueryToken: Codable {
-    public let Session: String?
-    public let Continuation: String?
-    public let MaxCount: Int
-    public let OrderBy: OrderBy
-    public let Tags: [PredictionQueryTag]?
-    public let IterationId: String?
-    public let StartTime: Date?
-    public let EndTime: Date?
-    public let Application: String?
+    public let session: String?
+    public let continuation: String?
+    public let maxCount: Int
+    public let orderBy: OrderBy
+    public let tags: [PredictionQueryTag]?
+    public let iterationId: String?
+    public let startTime: Date?
+    public let endTime: Date?
+    public let application: String?
     
     public enum OrderBy: String, Codable {
         case newest     = "Newest"
@@ -289,17 +381,187 @@ public struct PredictionQueryToken: Codable {
         case suggested  = "Suggested"
     }
     
-    public init(Session: String?, Continuation: String?, MaxCount: Int, OrderBy: OrderBy, Tags: [PredictionQueryTag]?, IterationId: String?, StartTime: Date?, EndTime: Date?, Application: String?) {
-        self.Session = Session
-        self.Continuation = Continuation
-        self.MaxCount = MaxCount
-        self.OrderBy = OrderBy
-        self.Tags = Tags
-        self.IterationId = IterationId
-        self.StartTime = StartTime
-        self.EndTime = EndTime
-        self.Application = Application
+    public init(session: String?, continuation: String?, maxCount: Int, orderBy: OrderBy, tags: [PredictionQueryTag]?, iterationId: String?, startTime: Date?, endTime: Date?, application: String?) {
+        self.session = session
+        self.continuation = continuation
+        self.maxCount = maxCount
+        self.orderBy = orderBy
+        self.tags = tags
+        self.iterationId = iterationId
+        self.startTime = startTime
+        self.endTime = endTime
+        self.application = application
     }
+}
+
+public struct PredictionQueryTag: Codable {
+    public let id: String
+    public let minThreshold: Float
+    public let maxThreshold: Float
+    
+    public init(id: String, minThreshold: Float, maxThreshold: Float) {
+        self.id = id
+        self.minThreshold = minThreshold
+        self.maxThreshold = maxThreshold
+    }
+}
+
+public struct PredictionQueryResult: Codable {
+    public let token: PredictionQueryToken?
+    public let results: [StoredImagePrediction]?
+}
+
+public struct StoredImagePrediction: Codable {
+    public let resizedImageUri: Url?
+    public let thumbnailUri: URL?
+    public let originalImageUri: URL?
+    public let domain: String
+    public let id: String
+    public let project: String
+    public let iteration: String
+    public let created: Date
+    public let predictions: [Prediction]?
+}
+
+public struct IterationPerformance: Codable {
+    public let perTagPerformance: [TagPerformance]?
+    public let precision: Float
+    public let precisionStdDeviation: Float
+    public let recall: Float
+    public let recallStdDeviation: Float
+    public let averagePrecision: Float
+}
+
+public struct TagPerformance: Codable {
+    public let id: String
+    public let name: String?
+    public let precision: Float
+    public let precisionStdDeviation: Float
+    public let recall: Float
+    public let recallStdDeviation: Float
+    public let averagePrecision: Float
+}
+
+public struct ImagePerformance: Codable {
+    public let predictions: [Prediction]?
+    public let id: String
+    public let created: Date
+    public let width: Float
+    public let height: Float
+    public let imageUri: String
+    public let thumbnailUri: String
+    public let tags: [ImageTag]?
+    public let regions: [ImageRegion]?
+}
+
+public struct Project: Codable {
+    public let id: String
+    public let name: String
+    public let description: String
+    public let settings: ProjectSettings
+    public let created: Date
+    public let lastModified: Date
+    public let thumbnailUri: URL?
+    public let drModeEnabled: Bool
+}
+
+public struct ProjectSettings: Codable {
+    public let domainId: String?
+    public let classificationType: Classifier
+    public let targetExportPlatforms: [ExportPlatform]
+}
+
+public struct Iteration: Codable {
+    public let id: String
+    public let name: String?
+    public let isDefault: Bool
+    public let status: String?
+    public let created: Date
+    public let lastModified: Date
+    public let trainedAt: Date?
+    public let projectId: String
+    public let exportable: Bool
+    public let exportableTo: [ExportPlatform]
+    public let domainId: String?
+    public let classificationType: Classifier
+    public let trainingType: Training
+    public let reservedBudgetInHours: Int
+    public let publishName: String
+    public let originalPublishResourceId: String
+}
+
+public struct Export: Codable {
+    public let platform: ExportPlatform
+    public let status: ExportStatus
+    public let downloadUri: URL?
+    public let flavor: ExportFlavor
+    public let newerVersionAvailable: Bool
+}
+
+public struct Tag: Codable {
+    public let id: String
+    public let name: String
+    public let description: String
+    public let type: TagType
+    public let imageCount: Int
+}
+
+public struct CustomVisionError: Codable {
+    public let code: CustomVisionErrorCode
+    public let message: String
+}
+
+
+// MARK: enums
+public enum ImageCreateStatus: String, Codable {
+    case ok = "OK"
+    case okDuplicate = "OKDuplicate"
+    case errorSource = "ErrorSource"
+    case errorImageFormat = "ErrorImageFormat"
+    case errorImageSize = "ErrorImageSize"
+    case errorStorage = "ErrorStorage"
+    case errorLimitExceed = "ErrorLimitExceed"
+    case errorTagLimitExceed = "ErrorTagLimitExceed"
+    case errorRegionLimitExceed = "ErrorRegionLimitExceed"
+    case errorUnknown = "ErrorUnknown"
+    case errorNegativeAndRegularTagOnSameImage = "ErrorNegativeAndRegularTagOnSameImage"
+}
+
+public enum Classifier: String, Codable {
+    case multiclass = "Multiclass"
+    case multilabel = "Multilabel"
+}
+
+public enum TrainingType: String, Codable {
+    case regular    = "Regular"
+    case advanced   = "Advanced"
+}
+
+public enum ExportPlatform: String, Codable {
+    case coreML     = "CoreML"
+    case tensorFlow = "TensorFlow"
+    case DockerFile = "DockerFile"
+    case onnx       = "ONNX"
+    case valdk      = "VAIDK"
+}
+
+public enum ExportStatus: String, Codable {
+    case exporting  = "Exporting"
+    case failed     = "Failed"
+    case done       = "Done"
+}
+
+public enum ExportFlavor: String, Codable {
+    case linux      = "Linux"
+    case windows    = "Windows"
+    case onnx10     = "ONNX10"
+    case onnx12     = "ONNX12"
+    case arm        = "ARM"
+}
+
+public enum TagType: String, Codable {
+    case regular    = "Regular"
+    case negative   = "Negative"
 }
 
 public enum OrderBy: String, Codable {
@@ -307,220 +569,120 @@ public enum OrderBy: String, Codable {
     case oldest     = "Oldest"
 }
 
-public struct PredictionQueryTag: Codable {
-    public let Id: String
-    public let MinThreshold: Float
-    public let MaxThreshold: Float
-    
-    public init(Id: String, MinThreshold: Float, MaxThreshold: Float) {
-        self.Id = Id
-        self.MinThreshold = MinThreshold
-        self.MaxThreshold = MaxThreshold
-    }
-}
-
-public struct PredictionQuery: Codable {
-    public let Results: [Prediction]?
-    public let Token: PredictionQueryToken?
-    
-    public init(Results: [Prediction]?, Token: PredictionQueryToken?) {
-        self.Results = Results
-        self.Token = Token
-    }
-}
-
-public struct Prediction: Codable {
-    public let Id: String
-    public let Project: String
-    public let Iteration: String
-    public let Created: Date
-    public let Predictions: [PredictionTag]?
-    public let ImageUri: URL?
-    public let ThumbnailUri: URL?
-    
-    public init(Id: String, Project: String, Iteration: String, Created: Date, Predictions: [PredictionTag]?, ImageUri: URL?, ThumbnailUri: URL?) {
-        self.Id = Id
-        self.Project = Project
-        self.Iteration = Iteration
-        self.Created = Created
-        self.Predictions = Predictions
-        self.ImageUri = ImageUri
-        self.ThumbnailUri = ThumbnailUri
-    }
-}
-
-public struct ImageUrl: Codable {
-    public let Url: URL?
-    
-    public init(Url: URL?) {
-        self.Url = Url
-    }
-}
-
-public struct ImagePredictionResult: Codable {
-    public let Id: String
-    public let Project: String
-    public let Iteration: String
-    public let Created: Date
-    public let Predictions: [ImageTagPrediction]?
-    
-    public init(Id: String, Project: String, Iteration: String, Created: Date, Predictions: [ImageTagPrediction]?) {
-        self.Id = Id
-        self.Project = Project
-        self.Iteration = Iteration
-        self.Created = Created
-        self.Predictions = Predictions
-    }
-}
-
-public struct ImageTagPrediction: Codable {
-    public let TagId: String
-    public let Tag: String?
-    public let Probability: Double
-    
-    public init(TagId: String, Tag: String?, Probability: Double) {
-        self.TagId = TagId
-        self.Tag = Tag
-        self.Probability = Probability
-    }
-}
-
-public struct Project: Codable {
-    public let Id: String
-    public let Name: String?
-    public let Description: String?
-    public let Settings: ProjectSettings?
-    public let CurrentIterationId: String?
-    public let Created: Date
-    public let LastModified: Date
-    public let ThumbnailUri: URL?
-    
-    public init(Id: String, Name: String?, Description: String?, Settings: ProjectSettings?, CurrentIterationId: String?, Created: Date, LastModified: Date, ThumbnailUri: URL?) {
-        self.Id = Id
-        self.Name = Name
-        self.Description = Description
-        self.Settings = Settings
-        self.CurrentIterationId = CurrentIterationId
-        self.Created = Created
-        self.LastModified = LastModified
-        self.ThumbnailUri = ThumbnailUri
-    }
-}
-
-public struct ProjectSettings: Codable {
-    public let DomainId: String?
-    
-    public init(DomainId: String?) {
-        self.DomainId = DomainId
-    }
-}
-
-public struct Iteration: Codable {
-    public let Id: String
-    public let Name: String?
-    public let IsDefault: Bool
-    public let Status: String?
-    public let Created: Date
-    public let LastModified: Date
-    public let TrainedAt: Date?
-    public let ProjectId: String
-    public let Exportable: Bool
-    public let DomainId: String?
-    
-    public init(Id: String, Name: String?, IsDefault: Bool, Status: String?, Created: Date, LastModified: Date, TrainedAt: Date?, ProjectId: String, Exportable: Bool, DomainId: String?) {
-        self.Id = Id
-        self.Name = Name
-        self.IsDefault = IsDefault
-        self.Status = Status
-        self.Created = Created
-        self.LastModified = LastModified
-        self.TrainedAt = TrainedAt
-        self.ProjectId = ProjectId
-        self.Exportable = Exportable
-        self.DomainId = DomainId
-    }
-}
-
-public struct IterationPerformance: Codable {
-    public let PerTagPerformance: [TagPerformance]?
-    public let Precision: Double
-    public let PrecisionStdDeviation: Double
-    public let Recall: Double
-    public let RecallStdDeviation: Double
-    
-    public init(PerTagPerformance: [TagPerformance]?, Precision: Double, PrecisionStdDeviation: Double, Recall: Double, RecallStdDeviation: Double) {
-        self.PerTagPerformance = PerTagPerformance
-        self.Precision = Precision
-        self.PrecisionStdDeviation = PrecisionStdDeviation
-        self.Recall = Recall
-        self.RecallStdDeviation = RecallStdDeviation
-    }
-}
-
-public struct TagPerformance: Codable {
-    public let Id: String
-    public let Name: String?
-    public let Precision: Double
-    public let PrecisionStdDeviation: Double
-    public let Recall: Double
-    public let RecallStdDeviation: Double
-    
-    public init(Id: String, Name: String?, Precision: Double, PrecisionStdDeviation: Double, Recall: Double, RecallStdDeviation: Double) {
-        self.Id = Id
-        self.Name = Name
-        self.Precision = Precision
-        self.PrecisionStdDeviation = PrecisionStdDeviation
-        self.Recall = Recall
-        self.RecallStdDeviation = RecallStdDeviation
-    }
-}
-
-public struct Export: Codable {
-    public let Platform: Platform
-    public let Status: Status
-    public let DownloadUri: URL?
-    
-    public enum Platform: String, Codable {
-        case coreML     = "CoreML"
-        case tensorFlow = "TensorFlow"
-    }
-    public enum Status: String, Codable {
-        case exporting  = "Exporting"
-        case failed     = "Failed"
-        case done       = "Done"
-    }
-    
-    public init(Platform: Platform, Status: Status, DownloadUri: URL?) {
-        self.Platform = Platform
-        self.Status = Status
-        self.DownloadUri = DownloadUri
-    }
-}
-
-public struct TagList: Codable {
-    public let Tags: [Tag]?
-    public let TotalTaggedImages: Int
-    public let TotalUntaggedImages: Int
-    
-    public init(Tags: [Tag]?, TotalTaggedImages: Int, TotalUntaggedImages: Int) {
-        self.Tags = Tags
-        self.TotalTaggedImages = TotalTaggedImages
-        self.TotalUntaggedImages = TotalUntaggedImages
-    }
-}
-
-public struct Tag: Codable {
-    public let Id: String
-    public let Name: String?
-    public let Description: String?
-    public let ImageCount: Int
-    
-    public init(Id: String, Name: String?, Description: String?, ImageCount: Int) {
-        self.Id = Id
-        self.Name = Name
-        self.Description = Description
-        self.ImageCount = ImageCount
-    }
+public enum CustomVisionErrorCode: String, Codable {
+    case noError = "NoError"
+    case badRequest = "BadRequest"
+    case badRequestExceededBatchSize = "BadRequestExceededBatchSize"
+    case badRequestNotSupported = "BadRequestNotSupported"
+    case badRequestInvalidIds = "BadRequestInvalidIds"
+    case badRequestProjectName = "BadRequestProjectName"
+    case badRequestProjectNameNotUnique = "BadRequestProjectNameNotUnique"
+    case badRequestProjectDescription = "BadRequestProjectDescription"
+    case badRequestProjectUnknownDomain = "BadRequestProjectUnknownDomain"
+    case badRequestProjectUnknownClassification = "BadRequestProjectUnknownClassification"
+    case badRequestProjectUnsupportedDomainTypeChange = "BadRequestProjectUnsupportedDomainTypeChange"
+    case badRequestProjectUnsupportedExportPlatform = "BadRequestProjectUnsupportedExportPlatform"
+    case badRequestIterationName = "BadRequestIterationName"
+    case badRequestIterationNameNotUnique = "BadRequestIterationNameNotUnique"
+    case badRequestIterationDescription = "BadRequestIterationDescription"
+    case badRequestIterationIsNotTrained = "BadRequestIterationIsNotTrained"
+    case badRequestWorkspaceCannotBeModified = "BadRequestWorkspaceCannotBeModified"
+    case badRequestWorkspaceNotDeletable = "BadRequestWorkspaceNotDeletable"
+    case badRequestTagName = "BadRequestTagName"
+    case badRequestTagNameNotUnique = "BadRequestTagNameNotUnique"
+    case badRequestTagDescription = "BadRequestTagDescription"
+    case badRequestTagType = "BadRequestTagType"
+    case badRequestMultipleNegativeTag = "BadRequestMultipleNegativeTag"
+    case badRequestImageTags = "BadRequestImageTags"
+    case badRequestImageRegions = "BadRequestImageRegions"
+    case badRequestNegativeAndRegularTagOnSameImage = "BadRequestNegativeAndRegularTagOnSameImage"
+    case badRequestRequiredParamIsNull = "BadRequestRequiredParamIsNull"
+    case badRequestIterationIsPublished = "BadRequestIterationIsPublished"
+    case badRequestInvalidPublishName = "BadRequestInvalidPublishName"
+    case badRequestInvalidPublishTarget = "BadRequestInvalidPublishTarget"
+    case badRequestUnpublishFailed = "BadRequestUnpublishFailed"
+    case badRequestIterationNotPublished = "BadRequestIterationNotPublished"
+    case badRequestSubscriptionApi = "BadRequestSubscriptionApi"
+    case badRequestExceedProjectLimit = "BadRequestExceedProjectLimit"
+    case badRequestExceedIterationPerProjectLimit = "BadRequestExceedIterationPerProjectLimit"
+    case badRequestExceedTagPerProjectLimit = "BadRequestExceedTagPerProjectLimit"
+    case badRequestExceedTagPerImageLimit = "BadRequestExceedTagPerImageLimit"
+    case badRequestExceededQuota = "BadRequestExceededQuota"
+    case badRequestCannotMigrateProjectWithName = "BadRequestCannotMigrateProjectWithName"
+    case badRequestNotLimitedTrial = "BadRequestNotLimitedTrial"
+    case badRequestImageBatch = "BadRequestImageBatch"
+    case badRequestImageStream = "BadRequestImageStream"
+    case badRequestImageUrl = "BadRequestImageUrl"
+    case badRequestImageFormat = "BadRequestImageFormat"
+    case badRequestImageSizeBytes = "BadRequestImageSizeBytes"
+    case badRequestImageExceededCount = "BadRequestImageExceededCount"
+    case badRequestTrainingNotNeeded = "BadRequestTrainingNotNeeded"
+    case badRequestTrainingNotNeededButTrainingPipelineUpdated = "BadRequestTrainingNotNeededButTrainingPipelineUpdated"
+    case badRequestTrainingValidationFailed = "BadRequestTrainingValidationFailed"
+    case badRequestClassificationTrainingValidationFailed = "BadRequestClassificationTrainingValidationFailed"
+    case badRequestMultiClassClassificationTrainingValidationFailed = "BadRequestMultiClassClassificationTrainingValidationFailed"
+    case badRequestMultiLabelClassificationTrainingValidationFailed = "BadRequestMultiLabelClassificationTrainingValidationFailed"
+    case badRequestDetectionTrainingValidationFailed = "BadRequestDetectionTrainingValidationFailed"
+    case badRequestTrainingAlreadyInProgress = "BadRequestTrainingAlreadyInProgress"
+    case badRequestDetectionTrainingNotAllowNegativeTag = "BadRequestDetectionTrainingNotAllowNegativeTag"
+    case badRequestInvalidEmailAddress = "BadRequestInvalidEmailAddress"
+    case badRequestDomainNotSupportedForAdvancedTraining = "BadRequestDomainNotSupportedForAdvancedTraining"
+    case badRequestExportPlatformNotSupportedForAdvancedTraining = "BadRequestExportPlatformNotSupportedForAdvancedTraining"
+    case badRequestReservedBudgetInHoursNotEnoughForAdvancedTraining = "BadRequestReservedBudgetInHoursNotEnoughForAdvancedTraining"
+    case badRequestExportValidationFailed = "BadRequestExportValidationFailed"
+    case badRequestExportAlreadyInProgress = "BadRequestExportAlreadyInProgress"
+    case badRequestPredictionIdsMissing = "BadRequestPredictionIdsMissing"
+    case badRequestPredictionIdsExceededCount = "BadRequestPredictionIdsExceededCount"
+    case badRequestPredictionTagsExceededCount = "BadRequestPredictionTagsExceededCount"
+    case badRequestPredictionResultsExceededCount = "BadRequestPredictionResultsExceededCount"
+    case badRequestPredictionInvalidApplicationName = "BadRequestPredictionInvalidApplicationName"
+    case badRequestPredictionInvalidQueryParameters = "BadRequestPredictionInvalidQueryParameters"
+    case badRequestInvalid = "BadRequestInvalid"
+    case unsupportedMediaType = "UnsupportedMediaType"
+    case forbidden = "Forbidden"
+    case forbiddenUser = "ForbiddenUser"
+    case forbiddenUserResource = "ForbiddenUserResource"
+    case forbiddenUserSignupDisabled = "ForbiddenUserSignupDisabled"
+    case forbiddenUserSignupAllowanceExceeded = "ForbiddenUserSignupAllowanceExceeded"
+    case forbiddenUserDoesNotExist = "ForbiddenUserDoesNotExist"
+    case forbiddenUserDisabled = "ForbiddenUserDisabled"
+    case forbiddenUserInsufficientCapability = "ForbiddenUserInsufficientCapability"
+    case forbiddenDRModeEnabled = "ForbiddenDRModeEnabled"
+    case forbiddenInvalid = "ForbiddenInvalid"
+    case notFound = "NotFound"
+    case notFoundProject = "NotFoundProject"
+    case notFoundProjectDefaultIteration = "NotFoundProjectDefaultIteration"
+    case notFoundIteration = "NotFoundIteration"
+    case notFoundIterationPerformance = "NotFoundIterationPerformance"
+    case notFoundTag = "NotFoundTag"
+    case notFoundImage = "NotFoundImage"
+    case notFoundDomain = "NotFoundDomain"
+    case notFoundApimSubscription = "NotFoundApimSubscription"
+    case notFoundInvalid = "NotFoundInvalid"
+    case conflict = "Conflict"
+    case conflictInvalid = "ConflictInvalid"
+    case errorUnknown = "ErrorUnknown"
+    case errorProjectInvalidWorkspace = "ErrorProjectInvalidWorkspace"
+    case errorProjectInvalidPipelineConfiguration = "ErrorProjectInvalidPipelineConfiguration"
+    case errorProjectInvalidDomain = "ErrorProjectInvalidDomain"
+    case errorProjectTrainingRequestFailed = "ErrorProjectTrainingRequestFailed"
+    case errorProjectExportRequestFailed = "ErrorProjectExportRequestFailed"
+    case errorFeaturizationServiceUnavailable = "ErrorFeaturizationServiceUnavailable"
+    case errorFeaturizationQueueTimeout = "ErrorFeaturizationQueueTimeout"
+    case errorFeaturizationInvalidFeaturizer = "ErrorFeaturizationInvalidFeaturizer"
+    case errorFeaturizationAugmentationUnavailable = "ErrorFeaturizationAugmentationUnavailable"
+    case errorFeaturizationUnrecognizedJob = "ErrorFeaturizationUnrecognizedJob"
+    case errorFeaturizationAugmentationError = "ErrorFeaturizationAugmentationError"
+    case errorExporterInvalidPlatform = "ErrorExporterInvalidPlatform"
+    case errorExporterInvalidFeaturizer = "ErrorExporterInvalidFeaturizer"
+    case errorExporterInvalidClassifier = "ErrorExporterInvalidClassifier"
+    case errorPredictionServiceUnavailable = "ErrorPredictionServiceUnavailable"
+    case errorPredictionModelNotFound = "ErrorPredictionModelNotFound"
+    case errorPredictionModelNotCached = "ErrorPredictionModelNotCached"
+    case errorPrediction = "ErrorPrediction"
+    case errorPredictionStorage = "ErrorPredictionStorage"
+    case errorRegionProposal = "ErrorRegionProposal"
+    case errorInvalid = "ErrorInvalid"
 }
 
 
@@ -573,223 +735,3 @@ extension Tag: Equatable {
         return lhs.Id == rhs.Id
     }
 }
-
-
-// MARK: CustomStringConvertible
-
-extension ApiKeys: CustomStringConvertible {
-    public var description: String {
-        return "ApiKeys\n\tTrainingKeys: \(TrainingKeys.valueOrNilString)\n\tPredictionKeys: \(PredictionKeys.valueOrNilString)\n..."
-    }
-}
-
-extension KeyPair: CustomStringConvertible {
-    public var description: String {
-        return "KeyPair\n\tPrimaryKey: \(PrimaryKey.valueOrNilString)\n\tSecondaryKey: \(SecondaryKey.valueOrNilString)\n..."
-    }
-}
-
-extension Account: CustomStringConvertible {
-    public var description: String {
-        return "Account\n\tUserName: \(UserName.valueOrNilString)\n\tEmail: \(Email.valueOrNilString)\n\tKeys: \(Keys.valueOrNilString)\n\tQuotas: \(Quotas.valueOrNilString)\n..."
-    }
-}
-
-extension AccountQuota: CustomStringConvertible {
-    public var description: String {
-        return "AccountQuota\n\tTier: \(Tier.valueOrNilString)\n\tProjects: \(Projects.valueOrNilString)\n\tPredictions: \(Predictions.valueOrNilString)\n\tPerProject: \(PerProject.valueOrNilString)\n..."
-    }
-}
-
-extension Quota: CustomStringConvertible {
-    public var description: String {
-        return "Quota\n\tTotal: \(Total)\n\tUsed: \(Used)\n\tTimeUntilReset: \(TimeUntilReset.valueOrNilString)\n..."
-    }
-}
-
-extension PerProjectQuota: CustomStringConvertible {
-    public var description: String {
-        return "PerProjectQuota\n\tProjectId: \(ProjectId)\n\tIterations: \(Iterations.valueOrNilString)\n\tImages: \(Images.valueOrNilString)\n\tTags: \(Tags.valueOrNilString)\n..."
-    }
-}
-
-extension Domain: CustomStringConvertible {
-    public var description: String {
-        return "Domain\n\tId: \(Id)\n\tName: \(Name.valueOrNilString)\n\tExportable: \(Exportable)\n..."
-    }
-}
-
-extension Image: CustomStringConvertible {
-    public var description: String {
-        return "Image\n\tId: \(Id)\n\tCreated: \(Created)\n\tWidth: \(Width)\n\tHeight: \(Height)\n\tImageUri: \(ImageUri.valueOrNilString)\n\tThumbnailUri: \(ThumbnailUri.valueOrNilString)\n\tTags: \(Tags.valueOrNilString)\n\tPredictions: \(Predictions.valueOrNilString)\n..."
-    }
-}
-
-extension ImageTag: CustomStringConvertible {
-    public var description: String {
-        return "ImageTag\n\tTagId: \(TagId)\n\tCreated: \(Created)\n..."
-    }
-}
-
-extension PredictionTag: CustomStringConvertible {
-    public var description: String {
-        return "PredictionTag\n\tTagId: \(TagId)\n\tTag: \(Tag.valueOrNilString)\n\tProbability: \(Probability)\n..."
-    }
-}
-
-extension ImageCreateSummary: CustomStringConvertible {
-    public var description: String {
-        return "ImageCreateSummary\n\tIsBatchSuccessful: \(IsBatchSuccessful)\n\tImages: \(Images.valueOrNilString)\n..."
-    }
-}
-
-extension ImageCreateResult: CustomStringConvertible {
-    public var description: String {
-        return "ImageCreateResult\n\tSourceUrl: \(SourceUrl.valueOrNilString)\n\tStatus: \(self.Status.rawValue)\n\tImage: \(Image.valueOrNilString)\n..."
-    }
-}
-
-extension ImageFileCreateBatch: CustomStringConvertible {
-    public var description: String {
-        return "ImageFileCreateBatch\n\tImages: \(Images.valueOrNilString)\n\tTagIds: \(TagIds.valueOrNilString)\n..."
-    }
-}
-
-extension ImageFileCreateEntry: CustomStringConvertible {
-    public var description: String {
-        return "ImageFileCreateEntry\n\tName: \(Name.valueOrNilString)\n\tContents: \(Contents.valueOrNilString)\n\tTagIds: \(TagIds.valueOrNilString)\n..."
-    }
-}
-
-extension ImageUrlCreateBatch: CustomStringConvertible {
-    public var description: String {
-        return "ImageUrlCreateBatch\n\tImages: \(Images.valueOrNilString)\n\tTagIds: \(TagIds.valueOrNilString)\n..."
-    }
-}
-
-extension ImageUrlCreateEntry: CustomStringConvertible {
-    public var description: String {
-        return "ImageUrlCreateEntry\n\tUrl: \(Url.valueOrNilString)\n\tTagIds: \(TagIds.valueOrNilString)\n..."
-    }
-}
-
-extension ImageIdCreateBatch: CustomStringConvertible {
-    public var description: String {
-        return "ImageIdCreateBatch\n\tImages: \(Images.valueOrNilString)\n\tTagIds: \(TagIds.valueOrNilString)\n..."
-    }
-}
-
-extension ImageIdCreateEntry: CustomStringConvertible {
-    public var description: String {
-        return "ImageIdCreateEntry\n\tId: \(Id.valueOrNilString)\n\tTagIds: \(TagIds.valueOrNilString)\n..."
-    }
-}
-
-extension ImageTagCreateBatch: CustomStringConvertible {
-    public var description: String {
-        return "ImageTagCreateBatch\n\tTags: \(Tags.valueOrNilString)\n..."
-    }
-}
-
-extension ImageTagCreateEntry: CustomStringConvertible {
-    public var description: String {
-        return "ImageTagCreateEntry\n\tImageId: \(ImageId)\n\tTagId: \(TagId)\n..."
-    }
-}
-
-extension ImageTagCreateSummary: CustomStringConvertible {
-    public var description: String {
-        return "ImageTagCreateSummary\n\tCreated: \(Created.valueOrNilString)\n\tDuplicated: \(Duplicated.valueOrNilString)\n\tExceeded: \(Exceeded.valueOrNilString)\n..."
-    }
-}
-
-extension PredictionQueryToken: CustomStringConvertible {
-    public var description: String {
-        return "PredictionQueryToken\n\tSession: \(Session.valueOrNilString)\n\tContinuation: \(Continuation.valueOrNilString)\n\tMaxCount: \(MaxCount)\n\tOrderBy: \(self.OrderBy.rawValue)\n\tTags: \(Tags.valueOrNilString)\n\tIterationId: \(IterationId.valueOrNilString)\n\tStartTime: \(StartTime.valueOrNilString)\n\tEndTime: \(EndTime.valueOrNilString)\n\tApplication: \(Application.valueOrNilString)\n..."
-    }
-}
-
-extension PredictionQueryTag: CustomStringConvertible {
-    public var description: String {
-        return "PredictionQueryTag\n\tId: \(Id)\n\tMinThreshold: \(MinThreshold)\n\tMaxThreshold: \(MaxThreshold)\n..."
-    }
-}
-
-extension PredictionQuery: CustomStringConvertible {
-    public var description: String {
-        return "PredictionQuery\n\tResults: \(Results.valueOrNilString)\n\tToken: \(Token.valueOrNilString)\n..."
-    }
-}
-
-extension Prediction: CustomStringConvertible {
-    public var description: String {
-        return "Prediction\n\tId: \(Id)\n\tProject: \(Project)\n\tIteration: \(Iteration)\n\tCreated: \(Created)\n\tPredictions: \(Predictions.valueOrNilString)\n\tImageUri: \(ImageUri.valueOrNilString)\n\tThumbnailUri: \(ThumbnailUri.valueOrNilString)\n..."
-    }
-}
-
-extension ImageUrl: CustomStringConvertible {
-    public var description: String {
-        return "ImageUrl\n\tUrl: \(Url.valueOrNilString)\n..."
-    }
-}
-
-extension ImagePredictionResult: CustomStringConvertible {
-    public var description: String {
-        return "ImagePredictionResult\n\tId: \(Id)\n\tProject: \(Project)\n\tIteration: \(Iteration)\n\tCreated: \(Created)\n\tPredictions: \(Predictions.valueOrNilString)\n..."
-    }
-}
-
-extension ImageTagPrediction: CustomStringConvertible {
-    public var description: String {
-        return "ImageTagPrediction\n\tTagId: \(TagId)\n\tTag: \(Tag.valueOrNilString)\n\tProbability: \(Probability)\n..."
-    }
-}
-
-extension Project: CustomStringConvertible {
-    public var description: String {
-        return "Project\n\tId: \(Id)\n\tName: \(Name.valueOrNilString)\n\tDescription: \(Description.valueOrNilString)\n\tSettings: \(Settings.valueOrNilString)\n\tCurrentIterationId: \(CurrentIterationId.valueOrNilString)\n\tCreated: \(Created)\n\tLastModified: \(LastModified)\n\tThumbnailUri: \(ThumbnailUri.valueOrNilString)\n..."
-    }
-}
-
-extension ProjectSettings: CustomStringConvertible {
-    public var description: String {
-        return "ProjectSettings\n\tDomainId: \(DomainId.valueOrNilString)\n..."
-    }
-}
-
-extension Iteration: CustomStringConvertible {
-    public var description: String {
-        return "Iteration\n\tId: \(Id)\n\tName: \(Name.valueOrNilString)\n\tIsDefault: \(IsDefault)\n\tStatus: \(Status.valueOrNilString)\n\tCreated: \(Created)\n\tLastModified: \(LastModified)\n\tTrainedAt: \(TrainedAt.valueOrNilString)\n\tProjectId: \(ProjectId)\n\tExportable: \(Exportable)\n\tDomainId: \(DomainId.valueOrNilString)\n..."
-    }
-}
-
-extension IterationPerformance: CustomStringConvertible {
-    public var description: String {
-        return "IterationPerformance\n\tPerTagPerformance: \(PerTagPerformance.valueOrNilString)\n\tPrecision: \(Precision)\n\tPrecisionStdDeviation: \(PrecisionStdDeviation)\n\tRecall: \(Recall)\n\tRecallStdDeviation: \(RecallStdDeviation)\n..."
-    }
-}
-
-extension TagPerformance: CustomStringConvertible {
-    public var description: String {
-        return "TagPerformance\n\tId: \(Id)\n\tName: \(Name.valueOrNilString)\n\tPrecision: \(Precision)\n\tPrecisionStdDeviation: \(PrecisionStdDeviation)\n\tRecall: \(Recall)\n\tRecallStdDeviation: \(RecallStdDeviation)\n..."
-    }
-}
-
-extension Export: CustomStringConvertible {
-    public var description: String {
-        return "Export\n\tPlatform: \(self.Platform.rawValue)\n\tStatus: \(self.Status.rawValue)\n\tDownloadUri: \(DownloadUri.valueOrNilString)\n..."
-    }
-}
-
-extension TagList: CustomStringConvertible {
-    public var description: String {
-        return "TagList\n\tTags: \(Tags.valueOrNilString)\n\tTotalTaggedImages: \(TotalTaggedImages)\n\tTotalUntaggedImages: \(TotalUntaggedImages)\n..."
-    }
-}
-
-extension Tag: CustomStringConvertible {
-    public var description: String {
-        return "Tag\n\tId: \(Id)\n\tName: \(Name.valueOrNilString)\n\tDescription: \(Description.valueOrNilString)\n\tImageCount: \(ImageCount)\n..."
-    }
-}
-
