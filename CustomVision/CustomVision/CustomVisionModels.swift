@@ -17,22 +17,12 @@ public struct CustomVisionErrorMessage : Codable {
 
 public struct ApiKeys: Codable {
     public let trainingKeys: KeyPair?
-    public let predictionKeys: KeyPair?
-    
-    public init(trainingKeys: KeyPair?, predictionKeys: KeyPair?) {
-        self.trainingKeys = trainingKeys
-        self.predictionKeys = predictionKeys
-    }
+    public let predictionKeys: KeyPair?    
 }
 
 public struct KeyPair: Codable {
     public let primaryKey: String?
     public let secondaryKey: String?
-    
-    public init(primaryKey: String?, secondaryKey: String?) {
-        self.primaryKey = primaryKey
-        self.secondaryKey = secondaryKey
-    }
 }
 
 public struct Account: Codable {
@@ -40,13 +30,6 @@ public struct Account: Codable {
     public let email: String?
     public let keys: ApiKeys?
     public let quotas: AccountQuota?
-    
-    public init(userName: String?, email: String?, keys: ApiKeys?, quotas: AccountQuota?) {
-        self.userName = userName
-        self.email = email
-        self.keys = keys
-        self.quotas = quotas
-    }
 }
 
 public struct AccountQuota: Codable {
@@ -54,25 +37,12 @@ public struct AccountQuota: Codable {
     public let projects: Quota?
     public let predictions: Quota?
     public let perProject: [PerProjectQuota]?
-    
-    public init(tier: String?, projects: Quota?, predictions: Quota?, perProject: [PerProjectQuota]?) {
-        self.tier = tier
-        self.projects = projects
-        self.predictions = predictions
-        self.perProject = perProject
-    }
 }
 
 public struct Quota: Codable {
     public let total: Int
     public let used: Int
     public let timeUntilReset: String?
-    
-    public init(total: Int, used: Int, timeUntilReset: String?) {
-        self.total = total
-        self.used = used
-        self.timeUntilReset = timeUntilReset
-    }
 }
 
 public struct PerProjectQuota: Codable {
@@ -80,13 +50,6 @@ public struct PerProjectQuota: Codable {
     public let iterations: Quota?
     public let images: Quota?
     public let tags: Quota?
-    
-    public init(projectId: String, iterations: Quota?, images: Quota?, tags: Quota?) {
-        self.projectId = projectId
-        self.iterations = iterations
-        self.images = images
-        self.tags = tags
-    }
 }
 
 public struct Domain: Codable {
@@ -95,49 +58,21 @@ public struct Domain: Codable {
     public let type: DomainType
     public let exportable: Bool
     public let enabled: Bool
-    
-    public enum DomainType: String, Codable {
-        case classification  = "Classification"
-        case objectDetection = "ObjectDetection"
-    }
-    
-    public init(id: String, name: String?, type: DomainType, exportable: Bool, enabled: Bool) {
-        self.id = id
-        self.name = name
-        self.type = type
-        self.exportable = exportable
-        self.enabled = enabled
-    }
 }
 
 public struct ImageTagCreateBatch: Codable {
     public let tags: [ImageTagCreateEntry]?
-    
-    public init(tags: [ImageTagCreateEntry]?) {
-        self.tags = tags
-    }
 }
 
 public struct ImageTagCreateEntry: Codable {
     public let imageId: String
     public let tagId: String
-    
-    public init(imageId: String, tagId: String) {
-        self.imageId = imageId
-        self.tagId = tagId
-    }
 }
 
 public struct ImageTagCreateSummary: Codable {
     public let created: [ImageTagCreateEntry]?
     public let duplicated: [ImageTagCreateEntry]?
     public let exceeded: [ImageTagCreateEntry]?
-    
-    public init(created: [ImageTagCreateEntry]?, duplicated: [ImageTagCreateEntry]?, exceeded: [ImageTagCreateEntry]?) {
-        self.created = created
-        self.duplicated = duplicated
-        self.exceeded = exceeded
-    }
 }
 
 public struct ImageRegionCreateBatch: Codable {
@@ -157,12 +92,6 @@ public struct ImageRegionCreateSummary: Codable {
     public let created: [ImageRegionCreateEntry]?
     public let duplicated: [ImageRegionCreateEntry]?
     public let exceeded: [ImageRegionCreateEntry]?
-    
-    public init(created: [ImageRegionCreateEntry]?, duplicated: [ImageRegionCreateEntry]?, exceeded: [ImageRegionCreateEntry]?) {
-        self.created = created
-        self.duplicated = duplicated
-        self.exceeded = exceeded
-    }
 }
 
 public struct ImageRegionCreateResult: Codable {
@@ -182,36 +111,20 @@ public struct Image: Codable {
     public let created: Date
     public let width: Int
     public let height: Int
-    public let resizedImageUri: Url?
+    public let resizedImageUri: URL?
     public let thumbnailUri: URL?
     public let originalImageUri: URL?
     public let tags: [ImageTag]?
     public let regions: [ImageRegion]?
-    
-    public init(id: String, created: Date, width: Int, height: Int, originalImageUri: URL?, thumbnailUri: URL?, tags: [ImageTag]?, predictions: [PredictionTag]?) {
-        self.id = id
-        self.created = created
-        self.width = width
-        self.height = height
-        self.imageUri = imageUri
-        self.thumbnailUri = thumbnailUri
-        self.tags = tags
-        self.predictions = predictions
-    }
 }
 
 public struct ImageTag: Codable {
     public let tagId: String
     public let tagName: String
     public let created: Date
-    
-    public init(tagId: String, created: Date) {
-        self.tagId = tagId
-        self.created = created
-    }
 }
 
-public struct ImageRegion {
+public struct ImageRegion: Codable {
     public let regionId: String?
     public let tagName: String?
     public let created: Date?
@@ -226,22 +139,11 @@ public struct PredictionTag: Codable {
     public let tagId: String
     public let tag: String?
     public let probability: Float
-    
-    public init(tagId: String, tag: String?, probability: Float) {
-        self.tagId = tagId
-        self.tag = tag
-        self.probability = probability
-    }
 }
 
 public struct ImageCreateSummary: Codable {
     public let isBatchSuccessful: Bool
     public let images: [ImageCreateResult]?
-    
-    public init(isBatchSuccessful: Bool, images: [ImageCreateResult]?) {
-        self.isBatchSuccessful = isBatchSuccessful
-        self.images = images
-    }
 }
 
 public struct ImageCreateResult: Codable {
@@ -253,11 +155,6 @@ public struct ImageCreateResult: Codable {
 public struct ImageFileCreateBatch: Codable {
     public let images: [ImageFileCreateEntry]?
     public let tagIds: [String]?
-    
-    public init(images: [ImageFileCreateEntry]?, tagIds: [String]?) {
-        self.images = images
-        self.tagIds = tagIds
-    }
 }
 
 public struct ImageFileCreateEntry: Codable {
@@ -265,12 +162,6 @@ public struct ImageFileCreateEntry: Codable {
     public let contents: Data?
     public let tagIds: [String]?
     public let regions: [Region]?
-    
-    public init(name: String?, contents: Data?, tagIds: [String]?) {
-        self.name = name
-        self.contents = contents
-        self.tagIds = tagIds
-    }
 }
 
 public struct Region: Codable {
@@ -284,43 +175,23 @@ public struct Region: Codable {
 public struct ImageUrlCreateBatch: Codable {
     public let images: [ImageUrlCreateEntry]?
     public let tagIds: [String]?
-    
-    public init(images: [ImageUrlCreateEntry]?, tagIds: [String]?) {
-        self.images = images
-        self.tagIds = tagIds
-    }
 }
 
 public struct ImageUrlCreateEntry: Codable {
     public let url: URL
     public let tagIds: [String]?
     public let regions: [Region]?
-    
-    public init(url: URL?, tagIds: [String]?) {
-        self.url = url
-        self.tagIds = tagIds
-    }
 }
 
 public struct ImageIdCreateBatch: Codable {
     public let images: [ImageIdCreateEntry]?
     public let tagIds: [String]?
-    
-    public init(images: [ImageIdCreateEntry]?, tagIds: [String]?) {
-        self.images = images
-        self.tagIds = tagIds
-    }
 }
 
 public struct ImageIdCreateEntry: Codable {
     public let id: String?
     public let tagIds: [String]?
     public let regions: [Region]?
-    
-    public init(id: String?, tagIds: [String]?) {
-        self.id = id
-        self.tagIds = tagIds
-    }
 }
 
 public struct ImageRegionProposal: Codable {
@@ -343,10 +214,6 @@ public struct BoundingBox: Codable {
 
 public struct ImageUrl: Codable {
     public let url: URL
-    
-    public init(url: URL) {
-        self.url = url
-    }
 }
 
 public struct ImagePrediction: Codable {
@@ -380,30 +247,12 @@ public struct PredictionQueryToken: Codable {
         case oldest     = "Oldest"
         case suggested  = "Suggested"
     }
-    
-    public init(session: String?, continuation: String?, maxCount: Int, orderBy: OrderBy, tags: [PredictionQueryTag]?, iterationId: String?, startTime: Date?, endTime: Date?, application: String?) {
-        self.session = session
-        self.continuation = continuation
-        self.maxCount = maxCount
-        self.orderBy = orderBy
-        self.tags = tags
-        self.iterationId = iterationId
-        self.startTime = startTime
-        self.endTime = endTime
-        self.application = application
-    }
 }
 
 public struct PredictionQueryTag: Codable {
     public let id: String
     public let minThreshold: Float
     public let maxThreshold: Float
-    
-    public init(id: String, minThreshold: Float, maxThreshold: Float) {
-        self.id = id
-        self.minThreshold = minThreshold
-        self.maxThreshold = maxThreshold
-    }
 }
 
 public struct PredictionQueryResult: Codable {
@@ -412,7 +261,7 @@ public struct PredictionQueryResult: Codable {
 }
 
 public struct StoredImagePrediction: Codable {
-    public let resizedImageUri: Url?
+    public let resizedImageUri: URL?
     public let thumbnailUri: URL?
     public let originalImageUri: URL?
     public let domain: String
@@ -484,7 +333,7 @@ public struct Iteration: Codable {
     public let exportableTo: [ExportPlatform]
     public let domainId: String?
     public let classificationType: Classifier
-    public let trainingType: Training
+    public let trainingType: TrainingType
     public let reservedBudgetInHours: Int
     public let publishName: String
     public let originalPublishResourceId: String
@@ -513,6 +362,12 @@ public struct CustomVisionError: Codable {
 
 
 // MARK: enums
+
+public enum DomainType: String, Codable {
+    case classification  = "Classification"
+    case objectDetection = "ObjectDetection"
+}
+
 public enum ImageCreateStatus: String, Codable {
     case ok = "OK"
     case okDuplicate = "OKDuplicate"
@@ -690,48 +545,48 @@ public enum CustomVisionErrorCode: String, Codable {
 
 extension Domain: Equatable {
     public static func ==(lhs: Domain, rhs: Domain) -> Bool {
-        return lhs.Id == rhs.Id
+        return lhs.id == rhs.id
     }
 }
 
 extension Image: Equatable {
     public static func ==(lhs: Image, rhs: Image) -> Bool {
-        return lhs.Id == rhs.Id
+        return lhs.id == rhs.id
     }
 }
 
 extension ImageTag: Equatable {
     public static func ==(lhs: ImageTag, rhs: ImageTag) -> Bool {
-        return lhs.TagId == rhs.TagId
+        return lhs.tagId == rhs.tagId
     }
 }
 
 extension PredictionTag: Equatable {
     public static func ==(lhs: PredictionTag, rhs: PredictionTag) -> Bool {
-        return lhs.TagId == rhs.TagId
+        return lhs.tagId == rhs.tagId
     }
 }
 
 extension Prediction: Equatable {
     public static func ==(lhs: Prediction, rhs: Prediction) -> Bool {
-        return lhs.Id == rhs.Id
+        return lhs.tagId == rhs.tagId
     }
 }
 
 extension Project: Equatable {
     public static func ==(lhs: Project, rhs: Project) -> Bool {
-        return lhs.Id == rhs.Id
+        return lhs.id == rhs.id
     }
 }
 
 extension Iteration: Equatable {
     public static func ==(lhs: Iteration, rhs: Iteration) -> Bool {
-        return lhs.Id == rhs.Id
+        return lhs.id == rhs.id
     }
 }
 
 extension Tag: Equatable {
     public static func ==(lhs: Tag, rhs: Tag) -> Bool {
-        return lhs.Id == rhs.Id
+        return lhs.id == rhs.id
     }
 }

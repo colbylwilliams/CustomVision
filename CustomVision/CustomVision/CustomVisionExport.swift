@@ -31,11 +31,11 @@ public extension CustomVisionClient {
         self.trainProject { r in
             
             switch r.result {
-            case .success(let iteration) where iteration.Exportable:
+            case .success(let iteration) where iteration.exportable:
                     update("Exporting Model...")
                     self.exportIteration(iteration, withDelay: self.pollDelay) { r in
                         switch r.result {
-                        case .success(let export) where export.Status == .done && export.DownloadUri != nil:
+                        case .success(let export) where export.status == .done && export.downloadUri != nil:
                             return self.downloadExport(export, update, completion)
                         default: return self.getErrorMessage(from: r, update, completion)
                         }
@@ -43,11 +43,11 @@ public extension CustomVisionClient {
             case .success(let iteration):
                 self.getIteration(iteration, withDelay: self.pollDelay) { r in
                     switch r.result {
-                    case .success(let iteration) where iteration.Exportable:
+                    case .success(let iteration) where iteration.exportable:
                         update("Exporting Model...")
                         self.exportIteration(iteration, withDelay: self.pollDelay) { r in
                             switch r.result {
-                            case .success(let export) where export.Status == .done && export.DownloadUri != nil:
+                            case .success(let export) where export.status == .done && export.downloadUri != nil:
                                 return self.downloadExport(export, update, completion)
                             default: return self.getErrorMessage(from: r, update, completion)
                             }
@@ -64,9 +64,9 @@ public extension CustomVisionClient {
     
     func getIteration(_ iteration: Iteration, withDelay delay: Double, _ completion: @escaping (CustomVisionResponse<Iteration>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
-            self.getIteration(withId: iteration.Id) { r in
+            self.getIteration(withId: iteration.id) { r in
                 switch r.result {
-                case .success(let iteration) where !iteration.Exportable:
+                case .success(let iteration) where !iteration.exportable:
                     self.getIteration(iteration, withDelay: delay, completion)
                 default: completion(r)
                 }
@@ -75,12 +75,12 @@ public extension CustomVisionClient {
     }
     
     func exportIteration(_ iteration: Iteration, withDelay delay: Double, _ completion: @escaping (CustomVisionResponse<Export>) -> Void) {
-        self.exportIteration(withId: iteration.Id, forPlatform: .coreML) { r in
+        self.exportIteration(withId: iteration.id, forPlatform: .coreML) { r in
             switch r.result {
-            case .success(let export) where export.Status == .exporting:
+            case .success(let export) where export.status == .exporting:
                 self.getExport(iteration, withDelay: delay) { r in
                     switch r.result {
-                    case .success(let exports) where exports.first?.Status == .done && exports.first?.DownloadUri != nil:
+                    case .success(let exports) where exports.first?.status == .done && exports.first?.downloadUri != nil:
                         completion(CustomVisionResponse(request: r.request, data: r.data, response: r.response, result: .success(export)))
                     case .success(let exports):
                         completion(CustomVisionResponse(request: r.request, data: r.data, response: r.response, result: exports.first != nil ? .success(exports.first!) : .failure(CustomVisionClientError.unknown)))
@@ -95,9 +95,9 @@ public extension CustomVisionClient {
     
     func getExport(_ iteration: Iteration, withDelay delay: Double, _ completion: @escaping (CustomVisionResponse<[Export]>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(delay * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
-            self.getExports(fromIteration: iteration.Id) { r in
+            self.getExports(fromIteration: iteration.id) { r in
                 switch r.result {
-                    case .success(let exports) where exports.first?.Status == .exporting:
+                    case .success(let exports) where exports.first?.status == .exporting:
                         self.getExport(iteration, withDelay: delay, completion)
                 default: completion(r)
                 }
@@ -109,7 +109,7 @@ public extension CustomVisionClient {
         
         update("Downloading & Compiling Model...")
         
-        guard let url = export.DownloadUri, export.Status == .done, export.Platform == .coreML else {
+        guard let url = export.downloadUri, export.status == .done, export.platform == .coreML else {
             completion(false, "Model Update Failed"); return
         }
         

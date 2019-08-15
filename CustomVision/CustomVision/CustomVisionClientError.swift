@@ -12,6 +12,7 @@ public enum CustomVisionClientError : Error {
     case invalidIds
     case noTrainingKey
     case noPredictionKey
+    case noSubscriptionRegion
     case urlError(String)
     case decodeError(DecodingError)
     case encodingError(EncodingError)

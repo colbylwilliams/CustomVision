@@ -19,9 +19,9 @@ public extension CustomVisionClient {
     #endif
     
     
-    func predict(image: UIImage, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    func detect(image: UIImage, forApplication applicationId: String? = nil, forPublishedName publishedName: String, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
         if let data = image.jpegData(compressionQuality: 1.0) {
-            return self.predict(image: data, forApplication: applicationId, forIteration: iterationId, inProject: projectId, withoutStoring: noStore, completion: completion)
+            return self.detect(image: data, forApplication: applicationId, forPublishedName: publishedName, inProject: projectId, withoutStoring: noStore, completion: completion)
         } else {
             completion(CustomVisionResponse(CustomVisionClientError.unknown))
         }
@@ -29,9 +29,9 @@ public extension CustomVisionClient {
 
     func createImages(inProject projectId: String = defaultProjectId, from images: [UIImage], withTagIds tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> Void) {
     
-        let entries = images.map { ImageFileCreateEntry(Name: nil, Contents: $0.jpegData(compressionQuality: 1.0), TagIds: nil) }
+        let entries = images.map { ImageFileCreateEntry(name: nil, contents: $0.jpegData(compressionQuality: 1.0), tagIds: nil, regions: nil) }
         
-        let batch = ImageFileCreateBatch(Images: entries, TagIds: tagIds)
+        let batch = ImageFileCreateBatch(images: entries, tagIds: tagIds)
         
         return self.createImages(inProject: projectId, from: batch, completion: completion)
     }
@@ -42,7 +42,7 @@ public extension CustomVisionClient {
             
             switch r.result {
             case .success(let tag):
-                return self.createImages(inProject: projectId, from: images, withTagIds: [tag.Id], completion: completion)
+                return self.createImages(inProject: projectId, from: images, withTagIds: [tag.id], completion: completion)
             case .failure(let error):
                 completion(CustomVisionResponse(request: r.request, data: r.data, response: r.response, result: .failure(error)));
             }

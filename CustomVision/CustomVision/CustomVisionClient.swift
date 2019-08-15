@@ -69,6 +69,13 @@ public class CustomVisionClient {
     
     public static var defaultProjectId: String = ""
     
+    public static var subscriptionRegion: AzureRegion = .southCentralUS {
+        didSet {
+            TrainingApi.subscriptionRegion = subscriptionRegion
+            PredictionApi.subscriptionRegion = subscriptionRegion
+        }
+    }
+    
     public func getKeysFrom(plistNamed customPlistName: String?) {
         
         if let keys = CustomVisionKeys.tryCreateFromPlists(custom: customPlistName) {
@@ -84,17 +91,55 @@ public class CustomVisionClient {
             if keys.hasValidProjectId {
                 CustomVisionClient.defaultProjectId = keys.projectId!
             }
+            
+            if keys.hasValidSubscriptionRegion {
+                CustomVisionClient.subscriptionRegion = AzureRegion(rawValue: keys.subscriptionRegion!.lowercased())!
+            }
         }
     }
     
     
     // MARK: - Prediction API
 
-    public func predict(image imageData: Data, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    public func classify(image imageData: Data, forApplication applicationId: String? = nil, forPublishedName publishedName: String, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
         
-        let query = getQuery(("iterationId", iterationId), ("application", applicationId))
+        let query = getQuery(("application", applicationId))
         
-        let api: PredictionApi = noStore ? .predictImageWithNoStore(projectId: projectId) : .predictImage(projectId: projectId)
+        let api: PredictionApi = noStore ? .classifyImageWithNoStore(projectId: projectId, publishedName: publishedName) : .classifyImage(projectId: projectId, publishedName: publishedName)
+        
+        do {
+            
+            let request = try dataRequest(for: api, withBody: imageData, withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+    
+    public func classify(image imageUrl: URL, forApplication applicationId: String? = nil, forPublishedName publishedName: String, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
+        
+        let query = getQuery(("application", applicationId))
+        
+        let api: PredictionApi = noStore ? .classifyImageUrlWithNoStore(projectId: projectId, publishedName: publishedName) : .classifyImageUrl(projectId: projectId, publishedName: publishedName)
+        
+        do {
+            
+            let request = try dataRequest(for: api, withBody: ImageUrl(url: imageUrl), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+    
+    public func detect(image imageData: Data, forApplication applicationId: String? = nil, forPublishedName publishedName: String, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
+        
+        let query = getQuery(("application", applicationId))
+        
+        let api: PredictionApi = noStore ? .detectImageWithNoStore(projectId: projectId, publishedName: publishedName) : .detectImage(projectId: projectId, publishedName: publishedName)
         
         do {
             
@@ -107,15 +152,15 @@ public class CustomVisionClient {
         }
     }
 
-    public func predict(image imageUrl: URL, forApplication applicationId: String? = nil, forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    public func detect(image imageUrl: URL, forApplication applicationId: String? = nil, forPublishedName publishedName: String, inProject projectId: String = defaultProjectId, withoutStoring noStore: Bool = false, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
         
-        let query = getQuery(("iterationId", iterationId), ("application", applicationId))
+        let query = getQuery(("application", applicationId))
         
-        let api: PredictionApi = noStore ? .predictImageUrlWithNoStore(projectId: projectId) : .predictImageUrl(projectId: projectId)
+        let api: PredictionApi = noStore ? .detectImageUrlWithNoStore(projectId: projectId, publishedName: publishedName) : .detectImageUrl(projectId: projectId, publishedName: publishedName)
         
         do {
             
-            let request = try dataRequest(for: api, withBody: ImageUrl(Url: imageUrl), withQuery: query)
+            let request = try dataRequest(for: api, withBody: ImageUrl(url: imageUrl), withQuery: query)
             
             return sendRequest(request, completion: completion)
             
@@ -126,6 +171,32 @@ public class CustomVisionClient {
 
     
     // MARK: - Training API
+    
+    public func createImageRegions(inProject projectId: String = defaultProjectId, from imageRegionCreateBatch: ImageRegionCreateBatch, completion: @escaping (CustomVisionResponse<ImageRegionCreateSummary>) -> Void) {
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.createImageRegions(projectId: projectId), withBody: imageRegionCreateBatch)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+    
+    public func deleteImageRegions(fromProject projectId: String = defaultProjectId, withIds regionIds: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
+        
+        let query = getQuery(("regionIds", regionIds))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.deleteImageRegions(projectId: projectId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
     
     public func createImages(inProject projectId: String = defaultProjectId, from data: Data, withTags tagIds: [String]? = nil, completion: @escaping (CustomVisionResponse<ImageCreateSummary>) -> ()) {
         
@@ -232,7 +303,7 @@ public class CustomVisionClient {
         }
     }
     
-    public func getTags(inProject projectId: String = defaultProjectId, forIteration iteration: String? = nil, completion: @escaping (CustomVisionResponse<TagList>) -> Void) {
+    public func getTags(inProject projectId: String = defaultProjectId, forIteration iteration: String? = nil, completion: @escaping (CustomVisionResponse<[Tag]>) -> Void) {
         
         let query = getQuery(("iterationId", iteration))
         
@@ -260,10 +331,10 @@ public class CustomVisionClient {
         }
     }
     
-    public func postImageTags(inProject projectId: String = defaultProjectId, with imageTagCreateBatch: ImageTagCreateBatch, completion: @escaping (CustomVisionResponse<ImageTagCreateSummary>) -> Void) {
+    public func createImageTags(inProject projectId: String = defaultProjectId, with imageTagCreateBatch: ImageTagCreateBatch, completion: @escaping (CustomVisionResponse<ImageTagCreateSummary>) -> Void) {
         
         do {
-            let request = try dataRequest(for: TrainingApi.postImageTags(projectId: projectId), withBody: imageTagCreateBatch)
+            let request = try dataRequest(for: TrainingApi.createImageTags(projectId: projectId), withBody: imageTagCreateBatch)
         
             return sendRequest(request, completion: completion)
 
@@ -396,7 +467,7 @@ public class CustomVisionClient {
         }
     }
     
-    public func exportIteration(inProject projectId: String = defaultProjectId, withId iterationId: String, forPlatform platform: Export.Platform, completion: @escaping (CustomVisionResponse<Export>) -> Void) {
+    public func exportIteration(inProject projectId: String = defaultProjectId, withId iterationId: String, forPlatform platform: ExportPlatform, completion: @escaping (CustomVisionResponse<Export>) -> Void) {
         
         let query = getQuery(("platform", platform.rawValue))
         
@@ -414,18 +485,6 @@ public class CustomVisionClient {
         
         do {
             let request = try dataRequest(for: TrainingApi.getExports(projectId: projectId, iterationId: iterationId))
-        
-            return sendRequest(request, completion: completion)
-        
-        } catch {
-            completion(CustomVisionResponse(error))
-        }
-    }
-    
-    public func getAccountInfo(completion: @escaping (CustomVisionResponse<Account>) -> Void) {
-        
-        do {
-            let request = try dataRequest(for: TrainingApi.getAccountInfo)
         
             return sendRequest(request, completion: completion)
         
@@ -458,7 +517,7 @@ public class CustomVisionClient {
         }
     }
     
-    public func getPerformance(forIteration iterationId: String, inProject projectId: String = defaultProjectId, withThreshold threshold: Float, completion: @escaping (CustomVisionResponse<IterationPerformance>) -> Void) {
+    public func getIterationPerformance(forIteration iterationId: String, inProject projectId: String = defaultProjectId, withThreshold threshold: Float, completion: @escaping (CustomVisionResponse<IterationPerformance>) -> Void) {
         
         let query = getQuery(("threshold", threshold))
         
@@ -471,7 +530,89 @@ public class CustomVisionClient {
             completion(CustomVisionResponse(error))
         }
     }
+
+    public func getImagePerformanceCount(forIteration iterationId: String, inProject projectId: String = defaultProjectId, withTagIds tagIds: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
+        
+        let query = getQuery(("tagIds", tagIds))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.getIterationPerformance(projectId: projectId, iterationId: iterationId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    public func getImagePerformances(forIteration iterationId: String, inProject projectId: String = defaultProjectId, withTags tags: [String]? = nil, orderedBy orderBy: OrderBy? = nil, take: Int = 50, skip: Int = 0, completion: @escaping (CustomVisionResponse<[ImagePerformance]>) -> Void) {
+        
+        let query = getQuery(("iterationId", iterationId), ("tagIds", tags), ("orderBy", orderBy?.rawValue), ("take", take), ("skip", skip))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.getImagePerformances(projectId: projectId, iterationId: iterationId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
     
+    public func getImageRegionProposals(forImage imageId: String, inProject projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<ImageRegionProposal>) -> Void) {
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.getImageRegionProposals(projectId: projectId, imageId: imageId))
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    public func getImages(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, forImageIds imageIds: [String], completion: @escaping (CustomVisionResponse<[Image]>) -> Void) {
+        
+        let query = getQuery(("iterationId", iterationId), ("imageIds", imageIds))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.getImagesById(projectId: projectId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    public func getTaggedImageCount(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, forTagIds tagIds: [String], completion: @escaping (CustomVisionResponse<Data>) -> Void) {
+        
+        let query = getQuery(("iterationId", iterationId), ("tagIds", tagIds))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.getTaggedImageCount(projectId: projectId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    public func getUntaggedImageCount(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<Data>) -> Void) {
+        
+        let query = getQuery(("iterationId", iterationId))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.getUntaggedImageCount(projectId: projectId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
     public func getIterations(inProject projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<[Iteration]>) -> Void) {
         
         do {
@@ -512,10 +653,10 @@ public class CustomVisionClient {
         }
     }
     
-    public func queryPredictionResults(inProject projectId: String = defaultProjectId, with predictionQueryToken: PredictionQueryToken, completion: @escaping (CustomVisionResponse<PredictionQuery>) -> Void) {
+    public func queryPredictions(inProject projectId: String = defaultProjectId, with predictionQueryToken: PredictionQueryToken, completion: @escaping (CustomVisionResponse<PredictionQueryResult>) -> Void) {
         
         do {
-            let request = try dataRequest(for: TrainingApi.queryPredictionResults(projectId: projectId), withBody: predictionQueryToken)
+            let request = try dataRequest(for: TrainingApi.queryPredictions(projectId: projectId), withBody: predictionQueryToken)
         
             return sendRequest(request, completion: completion)
 
@@ -524,7 +665,7 @@ public class CustomVisionClient {
         }
     }
     
-    public func quickTestImage(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, with imageData: Data, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    public func quickTestImage(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, with imageData: Data, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
         
         let query = getQuery(("iterationId", iterationId))
         
@@ -538,7 +679,7 @@ public class CustomVisionClient {
         }
     }
     
-    public func quickTestImageUrl(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, with imageUrl: ImageUrl, completion: @escaping (CustomVisionResponse<ImagePredictionResult>) -> Void) {
+    public func quickTestImageUrl(forIteration iterationId: String? = nil, inProject projectId: String = defaultProjectId, with imageUrl: ImageUrl, completion: @escaping (CustomVisionResponse<ImagePrediction>) -> Void) {
         
         let query = getQuery(("iterationId", iterationId))
         
@@ -564,6 +705,32 @@ public class CustomVisionClient {
         }
     }
     
+    public func publish(iteration iterationId: String, inProject projectId: String = defaultProjectId, withName publishName: String, toPredictionResource predictionId: String, completion: @escaping (CustomVisionResponse<Data>) -> Void) {
+        
+        let query = getQuery(("publishName", publishName), ("predictionId", predictionId))
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.publishIteration(projectId: projectId, iterationId: iterationId), withQuery: query)
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
+    public func unpublish(iteration iterationId: String, inProject projectId: String = defaultProjectId, completion: @escaping (CustomVisionResponse<Data>) -> Void) {
+        
+        do {
+            let request = try dataRequest(for: TrainingApi.unpublishIteration(projectId: projectId, iterationId: iterationId))
+            
+            return sendRequest(request, completion: completion)
+            
+        } catch {
+            completion(CustomVisionResponse(error))
+        }
+    }
+
     
     
     fileprivate func sendRequest<T:Codable> (_ request: URLRequest, completion: @escaping (CustomVisionResponse<T>) -> ()) {
@@ -689,7 +856,7 @@ public class CustomVisionClient {
         
         if let data = response.data {
             if let errorMessage = try? decoder.decode(CustomVisionErrorMessage.self, from: data) {
-                completion(false, errorMessage.Message)
+                completion(false, errorMessage.message)
             } else if let string = String(data: data, encoding: .utf8) {
                 completion(false, string)
             } else {
