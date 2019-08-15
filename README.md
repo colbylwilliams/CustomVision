@@ -41,7 +41,31 @@ Run `carthage update` to build the framework and drag the built `CustomVision.fr
 
 ### CocoaPods
 
-_Coming soon_
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects.
+You can install it with the following command:
+
+```bash
+[sudo] gem install cocoapods
+```
+
+> CocoaPods 1.3+ is required.
+
+To integrate the Azure.iOS into your project, specify it in your [Podfile](http://guides.cocoapods.org/using/the-podfile.html):
+
+```ruby
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '12.0'
+use_frameworks!
+
+pod 'CustomVision', '~> 1.0'
+```
+
+Then, run the following command:
+
+```bash
+$ pod install
+...
+```
 
 ### Swift Package Manager
 
